@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultrag.net.nz/web/thymeleaf/layout"
+      layout:decorator="base/main">
+<head>
+    <meta charset="UTF-8">
+    <title>船舶效率分析</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+
+    <div class="page-content-wrapper">
+        <div class="page-content">
+
+            <div layout:fragment="content">
+
+                <!-- 查询模块 -->
+                <div layout:fragment="query">
+                    <div class="col-md-12">
+                        <div class="portlet light">
+                            <div class="portlet-body">
+                                <form action="" th:method="post" class="form-horizontal">
+                                    <div class="form-body">
+
+                                        <!-- 第一行 -->
+                                        <div class="row">
+
+                                            <!-- 查询条件1 -->
+                                            <div class="col-md-4" layout:fragment="query_condition_1">
+                                                <div class="form-group col-md-12">
+                                                    <div class="input-group" id="defaultrange">
+                                                        <input type="text" class="form-control" name="job_date"
+                                                               placeholder="作业日期" /> <span class="input-group-btn">
+																		<button class="btn default date-range-toggle"
+                                                                                type="button">
+																			<i class="fa fa-calendar"></i>
+																		</button>
+																	</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <!-- 查询条件2 -->
+                                            <div class="col-md-4" layout:fragment="query_condition_2">
+                                                <div class="form-group col-md-12">
+                                                    <select id="job_class" name="job_class"
+                                                            class="form-control select2-multiple select2-allow-clear"
+                                                            multiple="multiple" data-placeholder="作业工班">
+                                                        <option value="1" selected="selected">白班</option>
+                                                        <option value="2" selected="selected">夜班</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <!-- 查询条件3 -->
+                                            <div class="col-md-4" layout:fragment="query_condition_3">
+                                                <div class="form-group col-md-12">
+                                                    <select id="job_type" name="job_type"
+                                                            class="form-control select2-multiple select2-allow-clear"
+                                                            multiple="multiple" data-placeholder="作业类型">
+                                                        <option value="1" selected="selected">装船</option>
+                                                        <option value="2" selected="selected">卸船</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 第二行 -->
+                                        <div class="form-actions">
+                                            <div class="row">
+                                                <div class="col-md-9">
+                                                    <button type="button" class="btn green" id="searchBtn">查 询</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 数据展示模块 -->
+                <div layout:fragment="data">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="portlet light">
+                                <div id="qcEfficiency" style="height: 700px;">
+
+                                    <!-- 用以展示岸桥效率图表 -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script type="text/javascript" layout:fragment="script">
+
+    var data = [ {
+        "ID" : "1",
+        "TVR_SCD_ID" : "255552",
+        "op_date" : "2016/5/15",
+        "gongban" : "2",
+        "ship_name" : "中海金斯顿",
+        "im_vn" : "0179N",
+        "ex_vn" : "0180S",
+        "line_name" : "中海东南亚线",
+        "ship_company" : "CSCO",
+        "move_qty" : "563",
+        "unit_qty" : "689",
+        "teu_qty" : "1033.5",
+        "op_time" : "8.67",
+        "qc_time" : "24.29",
+        "move_per_hour" : "64.9",
+        "unit_per_hour" : "79.43",
+        "teu_per_hour" : "119.14",
+        "move_per_hour_t" : "23.18",
+        "unit_per_hour_t" : "28.37",
+        "teu_per_hour_t" : "42.55"
+    }, {
+        "ID" : "2",
+        "TVR_SCD_ID" : "255620",
+        "op_date" : "2016/5/17",
+        "gongban" : "1",
+        "ship_name" : "柏明",
+        "im_vn" : "0135W",
+        "ex_vn" : "0136E",
+        "line_name" : "阳明美西北线",
+        "ship_company" : "YML",
+        "move_qty" : "2026",
+        "unit_qty" : "2143",
+        "teu_qty" : "3214.5",
+        "op_time" : "20.57",
+        "qc_time" : "89.22",
+        "move_per_hour" : "98.51",
+        "unit_per_hour" : "104.2",
+        "teu_per_hour" : "156.3",
+        "move_per_hour_t" : "22.71",
+        "unit_per_hour_t" : "24.02",
+        "teu_per_hour_t" : "36.03"
+    }, {
+        "ID" : "3",
+        "TVR_SCD_ID" : "255623",
+        "op_date" : "2016/5/17",
+        "gongban" : "2",
+        "ship_name" : "中海横滨",
+        "im_vn" : "8055W",
+        "ex_vn" : "8056E",
+        "line_name" : "中海韩国线",
+        "ship_company" : "CSCO",
+        "move_qty" : "402",
+        "unit_qty" : "479",
+        "teu_qty" : "718.5",
+        "op_time" : "10.28",
+        "qc_time" : "24.7",
+        "move_per_hour" : "39.09",
+        "unit_per_hour" : "46.58",
+        "teu_per_hour" : "69.86",
+        "move_per_hour_t" : "16.27",
+        "unit_per_hour_t" : "19.39",
+        "teu_per_hour_t" : "29.09"
+    }, {
+        "ID" : "4",
+        "TVR_SCD_ID" : "255622",
+        "op_date" : "2016/5/18",
+        "gongban" : "1",
+        "ship_name" : "玛瑙石",
+        "im_vn" : "193E",
+        "ex_vn" : "193W",
+        "line_name" : "美总印巴航线",
+        "ship_company" : "APL",
+        "move_qty" : "407",
+        "unit_qty" : "511",
+        "teu_qty" : "766.5",
+        "op_time" : "11.65",
+        "qc_time" : "30.14",
+        "move_per_hour" : "34.93",
+        "unit_per_hour" : "43.86",
+        "teu_per_hour" : "65.79",
+        "move_per_hour_t" : "13.5",
+        "unit_per_hour_t" : "16.95",
+        "teu_per_hour_t" : "25.43"
+    }, {
+        "ID" : "5",
+        "TVR_SCD_ID" : "256413",
+        "op_date" : "2016/5/16",
+        "gongban" : "1",
+        "ship_name" : "新上海",
+        "im_vn" : "0096E",
+        "ex_vn" : "0097W",
+        "line_name" : "中海红海线",
+        "ship_company" : "CSCO",
+        "move_qty" : "3898",
+        "unit_qty" : "4113",
+        "teu_qty" : "6169.5",
+        "op_time" : "32.82",
+        "qc_time" : "156.89",
+        "move_per_hour" : "118.78",
+        "unit_per_hour" : "125.33",
+        "teu_per_hour" : "188",
+        "move_per_hour_t" : "24.84",
+        "unit_per_hour_t" : "26.22",
+        "teu_per_hour_t" : "39.32"
+    }, {
+        "ID" : "6",
+        "TVR_SCD_ID" : "255559",
+        "op_date" : "2016/5/14",
+        "gongban" : "2",
+        "ship_name" : "中通卡瑞娜",
+        "im_vn" : "1619W",
+        "ex_vn" : "1620E",
+        "line_name" : "中通关西线",
+        "ship_company" : "CL",
+        "move_qty" : "607",
+        "unit_qty" : "702",
+        "teu_qty" : "1053",
+        "op_time" : "15.37",
+        "qc_time" : "33.25",
+        "move_per_hour" : "39.49",
+        "unit_per_hour" : "45.67",
+        "teu_per_hour" : "68.5",
+        "move_per_hour_t" : "18.26",
+        "unit_per_hour_t" : "21.12",
+        "teu_per_hour_t" : "31.67"
+    }, {
+        "ID" : "7",
+        "TVR_SCD_ID" : "255633",
+        "op_date" : "2016/5/16",
+        "gongban" : "1",
+        "ship_name" : "商船三井恩赐",
+        "im_vn" : "001E",
+        "line_name" : "商船中东线",
+        "ship_company" : "MOL",
+        "move_qty" : "2172",
+        "unit_qty" : "2172",
+        "teu_qty" : "3258",
+        "op_time" : "14.33",
+        "qc_time" : "70.03",
+        "move_per_hour" : "151.6",
+        "unit_per_hour" : "151.6",
+        "teu_per_hour" : "227.39",
+        "move_per_hour_t" : "31.01",
+        "unit_per_hour_t" : "31.01",
+        "teu_per_hour_t" : "46.52"
+    }, {
+        "ID" : "8",
+        "TVR_SCD_ID" : "255558",
+        "op_date" : "2016/5/14",
+        "gongban" : "2",
+        "ship_name" : "韩进汉堡",
+        "im_vn" : "0038E",
+        "ex_vn" : "0039W",
+        "line_name" : "韩进中东线",
+        "ship_company" : "HJ",
+        "move_qty" : "1238",
+        "unit_qty" : "1395",
+        "teu_qty" : "2092.5",
+        "op_time" : "13.38",
+        "qc_time" : "58.71",
+        "move_per_hour" : "92.55",
+        "unit_per_hour" : "104.29",
+        "teu_per_hour" : "156.44",
+        "move_per_hour_t" : "21.09",
+        "unit_per_hour_t" : "23.76",
+        "teu_per_hour_t" : "35.64"
+    }, {
+        "ID" : "9",
+        "TVR_SCD_ID" : "255533",
+        "op_date" : "2016/5/13",
+        "gongban" : "1",
+        "ship_name" : "共同博多",
+        "im_vn" : "1619W",
+        "ex_vn" : "1620E",
+        "line_name" : "共同日本线",
+        "ship_company" : "JOT",
+        "move_qty" : "661",
+        "unit_qty" : "747",
+        "teu_qty" : "1120.5",
+        "op_time" : "13.92",
+        "qc_time" : "35.94",
+        "move_per_hour" : "47.49",
+        "unit_per_hour" : "53.67",
+        "teu_per_hour" : "80.5",
+        "move_per_hour_t" : "18.39",
+        "unit_per_hour_t" : "20.78",
+        "teu_per_hour_t" : "31.17"
+    }, {
+        "ID" : "10",
+        "TVR_SCD_ID" : "256216",
+        "op_date" : "2016/5/12",
+        "gongban" : "2",
+        "ship_name" : "新滨江",
+        "im_vn" : "1090S",
+        "ex_vn" : "1091N",
+        "line_name" : "浦海沿海线",
+        "ship_company" : "XXX",
+        "move_qty" : "828",
+        "unit_qty" : "949",
+        "teu_qty" : "1423.5",
+        "op_time" : "20.45",
+        "qc_time" : "56.05",
+        "move_per_hour" : "40.49",
+        "unit_per_hour" : "46.4",
+        "teu_per_hour" : "69.61",
+        "move_per_hour_t" : "14.77",
+        "unit_per_hour_t" : "16.93",
+        "teu_per_hour_t" : "25.4"
+    }, {
+        "ID" : "11",
+        "TVR_SCD_ID" : "255624",
+        "op_date" : "2016/5/17",
+        "gongban" : "1",
+        "ship_name" : "韩进鹿特丹",
+        "im_vn" : "0019W",
+        "ex_vn" : "0020E",
+        "line_name" : "韩进美西线",
+        "ship_company" : "HJ",
+        "move_qty" : "3837",
+        "unit_qty" : "3974",
+        "teu_qty" : "5961",
+        "op_time" : "25.39",
+        "qc_time" : "165.03",
+        "move_per_hour" : "151.12",
+        "unit_per_hour" : "156.52",
+        "teu_per_hour" : "234.78",
+        "move_per_hour_t" : "23.25",
+        "unit_per_hour_t" : "24.08",
+        "teu_per_hour_t" : "36.12"
+    }, {
+        "ID" : "12",
+        "TVR_SCD_ID" : "255554",
+        "op_date" : "2016/5/15",
+        "gongban" : "1",
+        "ship_name" : "晓洋",
+        "im_vn" : "1619N",
+        "ex_vn" : "1620S",
+        "line_name" : "海华台湾线",
+        "ship_company" : "HAS",
+        "move_qty" : "743",
+        "unit_qty" : "789",
+        "teu_qty" : "1183.5",
+        "op_time" : "17.49",
+        "qc_time" : "38.74",
+        "move_per_hour" : "42.48",
+        "unit_per_hour" : "45.11",
+        "teu_per_hour" : "67.67",
+        "move_per_hour_t" : "19.18",
+        "unit_per_hour_t" : "20.36",
+        "teu_per_hour_t" : "30.55"
+    }, {
+        "ID" : "13",
+        "TVR_SCD_ID" : "255556",
+        "op_date" : "2016/5/14",
+        "gongban" : "2",
+        "ship_name" : "中远日本",
+        "im_vn" : "051W",
+        "ex_vn" : "052E",
+        "line_name" : "O3中海美西线",
+        "ship_company" : "CSCOSH",
+        "move_qty" : "2646",
+        "unit_qty" : "2754",
+        "teu_qty" : "4131",
+        "op_time" : "24.89",
+        "qc_time" : "127.37",
+        "move_per_hour" : "106.31",
+        "unit_per_hour" : "110.65",
+        "teu_per_hour" : "165.97",
+        "move_per_hour_t" : "20.77",
+        "unit_per_hour_t" : "21.62",
+        "teu_per_hour_t" : "32.43"
+    }, {
+        "ID" : "14",
+        "TVR_SCD_ID" : "256643",
+        "op_date" : "2016/5/16",
+        "gongban" : "2",
+        "ship_name" : "韩进德国",
+        "im_vn" : "0031EE",
+        "line_name" : "韩进美西线",
+        "ship_company" : "HJ",
+        "move_qty" : "2618",
+        "unit_qty" : "2618",
+        "teu_qty" : "3927",
+        "op_time" : "12.64",
+        "qc_time" : "72.46",
+        "move_per_hour" : "207.17",
+        "unit_per_hour" : "207.17",
+        "teu_per_hour" : "310.76",
+        "move_per_hour_t" : "36.13",
+        "unit_per_hour_t" : "36.13",
+        "teu_per_hour_t" : "54.19"
+    }, {
+        "ID" : "15",
+        "TVR_SCD_ID" : "255557",
+        "op_date" : "2016/5/15",
+        "gongban" : "1",
+        "ship_name" : "长宝",
+        "im_vn" : "0693016W",
+        "ex_vn" : "0699-017E",
+        "line_name" : "长荣美西线",
+        "ship_company" : "EVG",
+        "move_qty" : "3085",
+        "unit_qty" : "3242",
+        "teu_qty" : "4863",
+        "op_time" : "24.61",
+        "qc_time" : "133.22",
+        "move_per_hour" : "125.35",
+        "unit_per_hour" : "131.73",
+        "teu_per_hour" : "197.59",
+        "move_per_hour_t" : "23.16",
+        "unit_per_hour_t" : "24.34",
+        "teu_per_hour_t" : "36.5"
+    }, {
+        "ID" : "16",
+        "TVR_SCD_ID" : "255535",
+        "op_date" : "2016/5/13",
+        "gongban" : "2",
+        "ship_name" : "中海大阪",
+        "im_vn" : "8171W",
+        "ex_vn" : "8172E",
+        "line_name" : "中海韩国线",
+        "ship_company" : "CSCO",
+        "move_qty" : "501",
+        "unit_qty" : "600",
+        "teu_qty" : "900",
+        "op_time" : "12.02",
+        "qc_time" : "24.9",
+        "move_per_hour" : "41.68",
+        "unit_per_hour" : "49.92",
+        "teu_per_hour" : "74.87",
+        "move_per_hour_t" : "20.12",
+        "unit_per_hour_t" : "24.1",
+        "teu_per_hour_t" : "36.15"
+    }, {
+        "ID" : "17",
+        "TVR_SCD_ID" : "255625",
+        "op_date" : "2016/5/18",
+        "gongban" : "1",
+        "ship_name" : "龙门",
+        "im_vn" : "204W",
+        "ex_vn" : "205E",
+        "line_name" : "民生日本线",
+        "ship_company" : "MSH",
+        "move_qty" : "291",
+        "unit_qty" : "301",
+        "teu_qty" : "451.5",
+        "op_time" : "12.11",
+        "qc_time" : "21.45",
+        "move_per_hour" : "24.03",
+        "unit_per_hour" : "24.86",
+        "teu_per_hour" : "37.29",
+        "move_per_hour_t" : "13.57",
+        "unit_per_hour_t" : "14.03",
+        "teu_per_hour_t" : "21.05"
+    }, {
+        "ID" : "18",
+        "TVR_SCD_ID" : "255540",
+        "op_date" : "2016/5/14",
+        "gongban" : "2",
+        "ship_name" : "长菁",
+        "im_vn" : "0050114W",
+        "ex_vn" : "0056-115E",
+        "line_name" : "长荣美地西线",
+        "ship_company" : "EVG",
+        "move_qty" : "1022",
+        "unit_qty" : "1061",
+        "teu_qty" : "1591.5",
+        "op_time" : "12.42",
+        "qc_time" : "44.39",
+        "move_per_hour" : "82.3",
+        "unit_per_hour" : "85.44",
+        "teu_per_hour" : "128.16",
+        "move_per_hour_t" : "23.02",
+        "unit_per_hour_t" : "23.9",
+        "teu_per_hour_t" : "35.85"
+    }, {
+        "ID" : "19",
+        "TVR_SCD_ID" : "256376",
+        "op_date" : "2016/5/14",
+        "gongban" : "1",
+        "ship_name" : "玉门",
+        "ex_vn" : "101E",
+        "line_name" : "民生日本线",
+        "ship_company" : "MSH",
+        "move_qty" : "159",
+        "unit_qty" : "189",
+        "teu_qty" : "283.5",
+        "op_time" : "6.03",
+        "qc_time" : "8.79",
+        "move_per_hour" : "26.35",
+        "unit_per_hour" : "31.32",
+        "teu_per_hour" : "46.98",
+        "move_per_hour_t" : "18.09",
+        "unit_per_hour_t" : "21.51",
+        "teu_per_hour_t" : "32.26"
+    }, {
+        "ID" : "20",
+        "TVR_SCD_ID" : "255523",
+        "op_date" : "2016/5/12",
+        "gongban" : "1",
+        "ship_name" : "海华基隆",
+        "im_vn" : "1619N",
+        "ex_vn" : "1620S",
+        "line_name" : "海华台湾线",
+        "ship_company" : "HAS",
+        "move_qty" : "696",
+        "unit_qty" : "783",
+        "teu_qty" : "1174.5",
+        "op_time" : "18.2",
+        "qc_time" : "42.02",
+        "move_per_hour" : "38.24",
+        "unit_per_hour" : "43.02",
+        "teu_per_hour" : "64.53",
+        "move_per_hour_t" : "16.57",
+        "unit_per_hour_t" : "18.64",
+        "teu_per_hour_t" : "27.95"
+    }, {
+        "ID" : "21",
+        "TVR_SCD_ID" : "255526",
+        "op_date" : "2016/5/12",
+        "gongban" : "1",
+        "ship_name" : "现代信念",
+        "im_vn" : "053W",
+        "ex_vn" : "054E",
+        "line_name" : "G6美西线",
+        "ship_company" : "HMM",
+        "move_qty" : "1560",
+        "unit_qty" : "1720",
+        "teu_qty" : "2580",
+        "op_time" : "13.87",
+        "qc_time" : "78.8",
+        "move_per_hour" : "112.48",
+        "unit_per_hour" : "124.02",
+        "teu_per_hour" : "186.03",
+        "move_per_hour_t" : "19.8",
+        "unit_per_hour_t" : "21.83",
+        "teu_per_hour_t" : "32.74"
+    }, {
+        "ID" : "22",
+        "TVR_SCD_ID" : "255534",
+        "op_date" : "2016/5/12",
+        "gongban" : "2",
+        "ship_name" : "韩进观音",
+        "im_vn" : "0006EE",
+        "ex_vn" : "0006E",
+        "line_name" : "韩进美西线",
+        "ship_company" : "HJ",
+        "move_qty" : "3569",
+        "unit_qty" : "3685",
+        "teu_qty" : "5527.5",
+        "op_time" : "26.95",
+        "qc_time" : "168.79",
+        "move_per_hour" : "132.43",
+        "unit_per_hour" : "136.73",
+        "teu_per_hour" : "205.1",
+        "move_per_hour_t" : "21.14",
+        "unit_per_hour_t" : "21.83",
+        "teu_per_hour_t" : "32.75"
+    }, {
+        "ID" : "23",
+        "TVR_SCD_ID" : "255628",
+        "op_date" : "2016/5/17",
+        "gongban" : "2",
+        "ship_name" : "日邮泰拉",
+        "im_vn" : "050E",
+        "ex_vn" : "050W",
+        "line_name" : "G6美西线",
+        "ship_company" : "NYK",
+        "move_qty" : "1068",
+        "unit_qty" : "1174",
+        "teu_qty" : "1761",
+        "op_time" : "9.37",
+        "qc_time" : "44.63",
+        "move_per_hour" : "114.02",
+        "unit_per_hour" : "125.34",
+        "teu_per_hour" : "188.01",
+        "move_per_hour_t" : "23.93",
+        "unit_per_hour_t" : "26.3",
+        "teu_per_hour_t" : "39.45"
+    }, {
+        "ID" : "24",
+        "TVR_SCD_ID" : "255618",
+        "op_date" : "2016/5/16",
+        "gongban" : "1",
+        "ship_name" : "东方旧金山",
+        "im_vn" : "E113",
+        "ex_vn" : "W114",
+        "line_name" : "东方东南亚线",
+        "ship_company" : "OOCL",
+        "move_qty" : "1923",
+        "unit_qty" : "2243",
+        "teu_qty" : "3364.5",
+        "op_time" : "26.07",
+        "qc_time" : "111.17",
+        "move_per_hour" : "73.76",
+        "unit_per_hour" : "86.03",
+        "teu_per_hour" : "129.05",
+        "move_per_hour_t" : "17.3",
+        "unit_per_hour_t" : "20.18",
+        "teu_per_hour_t" : "30.26"
+    }, {
+        "ID" : "25",
+        "TVR_SCD_ID" : "255616",
+        "op_date" : "2016/5/17",
+        "gongban" : "1",
+        "ship_name" : "贾德娜",
+        "ex_vn" : "620W",
+        "line_name" : "以星印度线",
+        "ship_company" : "ZIM",
+        "move_qty" : "320",
+        "unit_qty" : "444",
+        "teu_qty" : "666",
+        "op_time" : "11.73",
+        "qc_time" : "29.26",
+        "move_per_hour" : "27.29",
+        "unit_per_hour" : "37.87",
+        "teu_per_hour" : "56.8",
+        "move_per_hour_t" : "10.94",
+        "unit_per_hour_t" : "15.18",
+        "teu_per_hour_t" : "22.76"
+    }, {
+        "ID" : "26",
+        "TVR_SCD_ID" : "255617",
+        "op_date" : "2016/5/16",
+        "gongban" : "1",
+        "ship_name" : "长理",
+        "im_vn" : "1452018E",
+        "ex_vn" : "1459-019W",
+        "line_name" : "长荣中东线",
+        "ship_company" : "EVG",
+        "move_qty" : "2108",
+        "unit_qty" : "2337",
+        "teu_qty" : "3505.5",
+        "op_time" : "20.73",
+        "qc_time" : "95.93",
+        "move_per_hour" : "101.69",
+        "unit_per_hour" : "112.73",
+        "teu_per_hour" : "169.1",
+        "move_per_hour_t" : "21.98",
+        "unit_per_hour_t" : "24.36",
+        "teu_per_hour_t" : "36.54"
+    }, {
+        "ID" : "27",
+        "TVR_SCD_ID" : "255632",
+        "op_date" : "2016/5/18",
+        "gongban" : "1",
+        "ship_name" : "美森卡伊",
+        "im_vn" : "167W",
+        "ex_vn" : "167E",
+        "line_name" : "美森美西线",
+        "ship_company" : "MAT",
+        "move_qty" : "1304",
+        "unit_qty" : "1336",
+        "teu_qty" : "2004",
+        "op_time" : "16.13",
+        "qc_time" : "61.42",
+        "move_per_hour" : "80.84",
+        "unit_per_hour" : "82.82",
+        "teu_per_hour" : "124.23",
+        "move_per_hour_t" : "21.23",
+        "unit_per_hour_t" : "21.75",
+        "teu_per_hour_t" : "32.63"
+    }, {
+        "ID" : "28",
+        "TVR_SCD_ID" : "255627",
+        "op_date" : "2016/5/18",
+        "gongban" : "1",
+        "ship_name" : "女神岛",
+        "im_vn" : "0406W",
+        "ex_vn" : "0407E",
+        "line_name" : "神原日本线",
+        "ship_company" : "KKC",
+        "move_qty" : "322",
+        "unit_qty" : "342",
+        "teu_qty" : "513",
+        "op_time" : "9.79",
+        "qc_time" : "18.62",
+        "move_per_hour" : "32.89",
+        "unit_per_hour" : "34.93",
+        "teu_per_hour" : "52.4",
+        "move_per_hour_t" : "17.29",
+        "unit_per_hour_t" : "18.37",
+        "teu_per_hour_t" : "27.55"
+    }, {
+        "ID" : "29",
+        "TVR_SCD_ID" : "255621",
+        "op_date" : "2016/5/17",
+        "gongban" : "2",
+        "ship_name" : "美总韩国",
+        "im_vn" : "197W",
+        "ex_vn" : "197E",
+        "line_name" : "G6美西线",
+        "ship_company" : "APL",
+        "move_qty" : "2017",
+        "unit_qty" : "2044",
+        "teu_qty" : "3066",
+        "op_time" : "19.93",
+        "qc_time" : "83.75",
+        "move_per_hour" : "101.22",
+        "unit_per_hour" : "102.58",
+        "teu_per_hour" : "153.87",
+        "move_per_hour_t" : "24.08",
+        "unit_per_hour_t" : "24.41",
+        "teu_per_hour_t" : "36.61"
+    }, {
+        "ID" : "30",
+        "TVR_SCD_ID" : "255521",
+        "op_date" : "2016/5/12",
+        "gongban" : "2",
+        "ship_name" : "勋城",
+        "im_vn" : "035E",
+        "ex_vn" : "037W",
+        "line_name" : "太平中东线",
+        "ship_company" : "PIL",
+        "move_qty" : "1519",
+        "unit_qty" : "1752",
+        "teu_qty" : "2628",
+        "op_time" : "12.89",
+        "qc_time" : "65.52",
+        "move_per_hour" : "117.87",
+        "unit_per_hour" : "135.95",
+        "teu_per_hour" : "203.93",
+        "move_per_hour_t" : "23.18",
+        "unit_per_hour_t" : "26.74",
+        "teu_per_hour_t" : "40.11"
+    }, {
+        "ID" : "31",
+        "TVR_SCD_ID" : "255555",
+        "op_date" : "2016/5/15",
+        "gongban" : "1",
+        "ship_name" : "中海罗讷河",
+        "im_vn" : "006AE",
+        "ex_vn" : "006E",
+        "line_name" : "O3中海美西线",
+        "ship_company" : "CSCO",
+        "move_qty" : "1613",
+        "unit_qty" : "1734",
+        "teu_qty" : "2601",
+        "op_time" : "14.22",
+        "qc_time" : "78.78",
+        "move_per_hour" : "113.44",
+        "unit_per_hour" : "121.95",
+        "teu_per_hour" : "182.93",
+        "move_per_hour_t" : "20.47",
+        "unit_per_hour_t" : "22.01",
+        "teu_per_hour_t" : "33.01"
+    }, {
+        "ID" : "32",
+        "TVR_SCD_ID" : "255551",
+        "op_date" : "2016/5/14",
+        "gongban" : "1",
+        "ship_name" : "蝴蝶岛",
+        "im_vn" : "0228W",
+        "ex_vn" : "0229E",
+        "line_name" : "神原日本线",
+        "ship_company" : "KKC",
+        "move_qty" : "352",
+        "unit_qty" : "423",
+        "teu_qty" : "634.5",
+        "op_time" : "16.5",
+        "qc_time" : "19.25",
+        "move_per_hour" : "21.34",
+        "unit_per_hour" : "25.64",
+        "teu_per_hour" : "38.46",
+        "move_per_hour_t" : "18.28",
+        "unit_per_hour_t" : "21.97",
+        "teu_per_hour_t" : "32.95"
+    }, {
+        "ID" : "33",
+        "TVR_SCD_ID" : "255549",
+        "op_date" : "2016/5/13",
+        "gongban" : "1",
+        "ship_name" : "美总新泽西",
+        "im_vn" : "046W",
+        "ex_vn" : "046E",
+        "line_name" : "G6美西线",
+        "ship_company" : "APL",
+        "move_qty" : "3631",
+        "unit_qty" : "3659",
+        "teu_qty" : "5488.5",
+        "op_time" : "26.41",
+        "qc_time" : "145.65",
+        "move_per_hour" : "137.47",
+        "unit_per_hour" : "138.53",
+        "teu_per_hour" : "207.79",
+        "move_per_hour_t" : "24.93",
+        "unit_per_hour_t" : "25.12",
+        "teu_per_hour_t" : "37.68"
+    }, {
+        "ID" : "34",
+        "TVR_SCD_ID" : "256414",
+        "op_date" : "2016/5/17",
+        "gongban" : "2",
+        "ship_name" : "樱花岛",
+        "im_vn" : "0540W",
+        "line_name" : "神原日本线",
+        "ship_company" : "KKC",
+        "move_qty" : "85",
+        "unit_qty" : "85",
+        "teu_qty" : "127.5",
+        "op_time" : "2.09",
+        "qc_time" : "3.22",
+        "move_per_hour" : "40.72",
+        "unit_per_hour" : "40.72",
+        "teu_per_hour" : "61.08",
+        "move_per_hour_t" : "26.41",
+        "unit_per_hour_t" : "26.41",
+        "teu_per_hour_t" : "39.62"
+    }, {
+        "ID" : "35",
+        "TVR_SCD_ID" : "255531",
+        "op_date" : "2016/5/13",
+        "gongban" : "1",
+        "ship_name" : "翡翠岛",
+        "im_vn" : "0077W",
+        "ex_vn" : "0078E",
+        "line_name" : "神原日本线",
+        "ship_company" : "KKC",
+        "move_qty" : "469",
+        "unit_qty" : "506",
+        "teu_qty" : "759",
+        "op_time" : "11.92",
+        "qc_time" : "24.46",
+        "move_per_hour" : "39.35",
+        "unit_per_hour" : "42.45",
+        "teu_per_hour" : "63.67",
+        "move_per_hour_t" : "19.17",
+        "unit_per_hour_t" : "20.68",
+        "teu_per_hour_t" : "31.02"
+    }, {
+        "ID" : "36",
+        "TVR_SCD_ID" : "256356",
+        "op_date" : "2016/5/15",
+        "gongban" : "2",
+        "ship_name" : "海门",
+        "im_vn" : "237W",
+        "line_name" : "民生日本线",
+        "ship_company" : "MSH",
+        "move_qty" : "210",
+        "unit_qty" : "210",
+        "teu_qty" : "315",
+        "op_time" : "6.18",
+        "qc_time" : "9.46",
+        "move_per_hour" : "34",
+        "unit_per_hour" : "34",
+        "teu_per_hour" : "51.01",
+        "move_per_hour_t" : "22.2",
+        "unit_per_hour_t" : "22.2",
+        "teu_per_hour_t" : "33.3"
+    } ];
+
+    var xAxisData = [];
+    var barUPHData = [];
+    var barTEUData = [];
+    var barUPHData1 = [];
+    var barTEUData1 = [];
+    var lineData = [];
+
+    data.forEach(function(item, index) {
+        //遍历整个json，组织需要的数据
+        xAxisData.push(item.ship_name + item.im_vn + '/' + item.ex_vn);
+        barUPHData.push(item.unit_per_hour);
+        barTEUData.push(item.teu_per_hour);
+        barUPHData1.push(item.unit_per_hour_t);
+        barTEUData1.push(item.teu_per_hour_t);
+        lineData.push(item.unit_qty);
+    });
+
+    /*
+     for(var el in data){
+     //遍历整个json，组织需要的数据
+     xAxisData.push(data[el].ship_name + data[el].im_vn + data[el].ex_vn);
+     barUPHData.push(data[el].unit_per_hour);
+     barTEUData.push(data[el].teu_per_hour);
+     lineData.push(data[el].unit_qty);
+     }
+     */
+
+    // 基于准备好的dom，初始化echarts实例
+    var myChart1 = echarts.init(document.getElementById('qcEfficiency'), 'walden');
+
+    // 指定图表的配置项和数据
+    var option1 = {
+        title : {
+            text : '船舶效率分析（船时量）22',
+            left : 'center'
+        },
+        tooltip : {
+            trigger : 'axis',
+            axisPointer : { // 坐标轴指示器，坐标轴触发有效
+                type : 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+            }
+        },
+        toolbox : {
+            feature : {
+                saveAsImage : {
+                    show : true
+                }
+            }
+        },
+        legend : {
+            data : [ 'TEU/小时11', 'UNIT/小时', 'UNIT数量' ],
+            top : 30,
+        },
+        xAxis : [ {
+            type : 'category',
+            data : xAxisData,
+            axisLabel : {
+                interval : 0,
+                rotate : 60, //控制x轴label角度
+                textStyle : {
+                    fontSize : 14
+                }
+            },
+            splitLine : {
+                show : false
+            }
+        } ],
+        yAxis : [ {
+            type : 'value',
+            name : '效率(/小时)',
+            nameLocation : 'middle',
+            nameGap : 45,
+            nameTextStyle : {
+                fontSize : 15
+            },
+            min : 0,
+            max : 400,
+            interval : 40,
+            axisLabel : {
+                formatter : '{value}'
+            }
+        }, {
+            type : 'value',
+            name : 'UNIT数量',
+            nameLocation : 'middle',
+            nameGap : 50,
+            nameTextStyle : {
+                fontSize : 15
+            },
+            min : 0,
+            max : 5000,
+            interval : 500,
+            axisLabel : {
+                formatter : '{value}'
+            }
+        } ],
+
+        grid : { // 控制图的大小，调整下面这些值就可以，
+            x : 100,
+            x2 : 100,
+            y2 : 190,// y2可以控制 X轴跟Zoom控件之间的间隔，避免以为倾斜后造成 label重叠到zoom上
+        },
+
+        dataZoom : [ {
+            type : 'slider',
+            start : 0,
+            end : 30
+            //slider的默认结束位置，该值可影响柱子的宽度
+        } ],
+        series : [ {
+            name : 'UNIT/小时',
+            type : 'bar',
+            barMaxWidth : '60',
+            itemStyle : {
+                normal : {
+                    color : function(params) { //根据某些条件设置某个柱子单独着色
+                        if (params.dataIndex == 5)
+                            return '#fff000';
+                        else
+                            return '#45C2F9';
+                    }
+                }
+            },
+            label : {
+                normal : {
+                    show : true,
+                    position : 'top'
+                }
+            },
+            data : barUPHData
+        },
+
+            {
+                name : 'TEU/小时11',
+                type : 'bar',
+                barMaxWidth : '60',
+                itemStyle : {
+                    normal : {
+                        color : '#75FDD4'
+                    }
+                },
+                label : {
+                    normal : {
+                        show : true,
+                        position : 'top'
+                    }
+                },
+                data : barTEUData
+            }, {
+                name : 'UNIT数量',
+                type : 'line',
+                label : {
+                    normal : {
+                        show : true,
+                        position : 'top'
+                    }
+                },
+                yAxisIndex : 1,
+                data : lineData
+            } ]
+    };
+    // 使用刚指定的配置项和数据显示图表。
+    myChart1.setOption(option1);
+
+    //这个只是一个单击选中某一个柱子的例子，如果需要用到该场景，需根据业务逻辑修改代码
+    var currentIndex = -1;
+    myChart1
+        .on(
+            'click',
+            function(params) {
+                currentIndex = params.dataIndex;
+                if (typeof option1.series[0].data[currentIndex] != "object") {
+
+                    var oldValue = option1.series[0].data[currentIndex];
+                    option1.series[0].data[currentIndex] = {};
+                    option1.series[0].data[currentIndex].value = oldValue;
+                    option1.series[0].data[currentIndex].itemStyle = {};
+                }
+
+                if (typeof option1.series[0].data[currentIndex].itemStyle.normal == "undefined") {
+                    option1.series[0].data[currentIndex].itemStyle = {
+                        normal : {
+                            color : '#ffce43'
+                        }
+                    };
+
+                } else {
+                    if (option1.series[0].data[currentIndex].itemStyle.normal.color == "#ffce43") {
+                        option1.series[0].data[currentIndex].itemStyle.normal.color = "#45C2F9";
+                    } else {
+                        option1.series[0].data[currentIndex].itemStyle.normal.color = "#ffce43";
+                    }
+                }
+                myChart1.setOption(option1, true);
+            });
+
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="base/main">
+<head>
+    <title>船舶效率大表</title>
+    <meta http-equiv="Content-Type" content="text/html;" charset="UTF-8" />
+</head>
+<body>
+<div layout:fragment="content">
+    <!-- row-->
+    <div class="row">
+        <div class="col-md-12">
+            <!-- BEGIN EXAMPLE TABLE PORTLET-->
+            <div class="portlet light bordered">
+                <div class="portlet-title">
+                    <div class="caption font-dark">
+                        <!-- <i class="icon-settings font-dark"></i> -->
+                        <span class="caption-subject bold uppercase">船舶效率大表</span>
+                    </div>
+                    <div class="tools"></div>
+                </div>
+                <div class="portlet-body">
+                    <table class="table table-striped table-bordered table-hover" id="bigtable">
+                        <thead>
+                            <tr>
+                                <th>船舶单次进港编号</th>
+                                <th>船舶标志</th>
+                                <th>船舶名</th>
+                                <th>船舶首-系柱编号</th>
+                                <th>船舶首-系柱偏移量</th>
+                                <th>船舶尾-系柱编号</th>
+                                <th>船舶尾-系柱偏移量</th>
+                                <th>船舶等级</th>
+                                <th>船舶到访时段</th>
+                                <th>船舶更新时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="vessel:${list}">
+                            <td th:text="${vessel.vesselVisit}"></td>
+                            <td th:text="${vessel.vesselCallSign}"></td>
+                            <td th:text="${vessel.vesselName}"></td>
+                            <td th:text="${vessel.bowBollard}"></td>
+                            <td th:text="${vessel.bowBollardOffsetCm}"></td>
+                            <td th:text="${vessel.sternBollard}"></td>
+                            <td th:text="${vessel.sternBollardOffsetCm}"></td>
+                            <td th:text="${vessel.vesselClassification}"></td>
+                            <td th:text="${vessel.vesselVisitPhase}"></td>
+                            <td th:text="${vessel.updated}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- END EXAMPLE TABLE PORTLET-->
+        </div>
+    </div>
+    <!-- row-->
+</div>
+</body>
+</html>

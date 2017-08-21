@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="base/main">
+<head>
+    <meta charset="UTF-8">
+    <title>岸桥作业效率分析</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+
+<div class="page-content-wrapper">
+    <div class="page-content">
+
+        <div layout:fragment="content">
+
+            <!-- 查询模块 -->
+            <div layout:fragment="query">
+                <div class="col-md-12">
+                    <div class="portlet light">
+                        <div class="portlet-body">
+                            <form action="" th:method="post" class="form-horizontal">
+                                <div class="form-body">
+
+                                    <!-- 第一行 -->
+                                    <div class="row">
+
+                                        <!-- 查询条件1 -->
+                                        <div class="col-md-4" layout:fragment="query_condition_1">
+                                            <div class="form-group col-md-12">
+                                                <div class="input-group" id="defaultrange">
+                                                    <input type="text" class="form-control" name="job_date"
+                                                           placeholder="作业日期" /> <span class="input-group-btn">
+																		<button class="btn default date-range-toggle"
+                                                                                type="button">
+																			<i class="fa fa-calendar"></i>
+																		</button>
+																	</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- 查询条件2 -->
+                                        <div class="col-md-4" layout:fragment="query_condition_2">
+                                            <div class="form-group col-md-12">
+                                                <select id="job_class" name="job_class"
+                                                        class="form-control select2-multiple select2-allow-clear"
+                                                        multiple="multiple" data-placeholder="作业工班">
+                                                    <option value="1" selected="selected">白班</option>
+                                                    <option value="2" selected="selected">夜班</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- 查询条件3 -->
+                                        <div class="col-md-4" layout:fragment="query_condition_3">
+                                            <div class="form-group col-md-12">
+                                                <select id="job_type" name="job_type"
+                                                        class="form-control select2-multiple select2-allow-clear"
+                                                        multiple="multiple" data-placeholder="作业类型">
+                                                    <option value="1" selected="selected">装船</option>
+                                                    <option value="2" selected="selected">卸船</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- 第二行 -->
+                                    <div class="form-actions">
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                                <button type="button" class="btn green" id="searchBtn">查 询</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 数据展示模块 -->
+            <div layout:fragment="data">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="portlet light">
+                            <div id="qcEfficiency" style="height: 700px;">
+
+                                <!-- 用以展示岸桥效率图表 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" layout:fragment="script">
+
+    var xAxisData = [],
+        barUPHData = [],
+        barTEUData = [];
+
+    var qcEfficiencyAnalysisChart = echarts.init(document.getElementById('qcEfficiency'), 'walden');
+
+    var qcEffiAnaOption = {
+
+        title : {
+            text : '岸桥作业效率分析',
+            left : 'center'
+        },
+    };
+
+</script>
+
+</body>
+</html>

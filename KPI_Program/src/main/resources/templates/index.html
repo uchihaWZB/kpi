@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultrag.net.nz/web/thymeleaf/layout"
+            layout:decorator="base/main">
+<head>
+    <title>欢迎使用KPI效率分析系统</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style type="text/css">
+        h1 {
+            font-family: "Microsoft Yahei", "Open Sans", sans-serif;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- START PAGE CONTENT-->
+    <div layout:fragment="content">
+        <div layout:fragment="data">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="portlet light">
+                        <div id="main" style="height: 800px;">
+                            <br /> <br /> <br />
+                            <br /> <br /> <br />
+                            <h1 class="page-title">欢迎使用 KPI 效率分析系统</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END PAGE CONTENT-->
+</body>
+</html>
