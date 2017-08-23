@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="base/main">
+<head>
+    <meta charset="UTF-8">
+    <title>船时效率分析</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+
+<div class="page-content-wrapper">
+    <div class="page-content">
+
+        <div layout:fragment="content">
+
+            <!-- 查询模块 -->
+            <div layout:fragment="query">
+                <div class="col-md-12">
+                    <div class="portlet light">
+                        <div class="portlet-body">
+                            <form action="" th:method="post" class="form-horizontal">
+                                <div class="form-body">
+
+                                    <!-- 第一行 -->
+                                    <div class="row">
+                                        <div class="col-md-4" layout:fragment="query_condition_2">
+                                            <div class="form-group col-md-12">
+                                                <label class="form-label">航次</label>
+                                                <input id="vessel_voyage" name="vessel_voyage" class="form-control"/>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                                <button type="button" class="btn green" id="searchBtn">查 询</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 数据展示模块 -->
+            <div layout:fragment="data">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="portlet light">
+                            <div id="main" style="height: 500px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="portlet light">
+                            <div id="main1" style="height: 500px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" layout:fragment="script">
+
+    $(function() {
+
+        jobQuanData();
+
+        $("#searchBtn").bind("click",function () {
+
+            jobQuanData();
+            $("#main1").empty();
+        })
+    });
+
+    //加载柱状图
+    function jobQuanData(){
+
+        var vesselQCList;
+        var qcArray = [];
+        var QCjobQuan = [];
+        //获取船次
+        var vessel_voyage = $("#vessel_voyage").val();
+        var param = {vessel_voyage:vessel_voyage};
+
+        $.ajax({
+            url: '/vessel_QCefficiency_analysisChart',
+            type: 'GET',
+            dataType: 'html',
+            timeout: gAjaxTimeout,
+            data: param,
+            error: function(xhr, textStatus, thrownError){
+                var err = $.i18n.prop('errors.ajax', xhr.status, textStatus);
+                alert(err);
+            },
+            success: function(response) {
+                var res = eval('(' + response + ')');
+
+                if(res.result == "ok"){
+                    if(res.data != null){
+                        vesselQCList = res.data.rows;
+
+                        for(var i in vesselQCList){
+
+                            qcArray[i] = vesselQCList[i].qc_id;
+                            QCjobQuan[i] = vesselQCList[i].jobQuan;
+                        }
+
+                        showBarGraphJobQuan(qcArray,QCjobQuan);
+                    }
+                }
+            }
+        });
+    }
+
+    function showBarGraphJobQuan(qcArray,QCjobQuan) {
+
+        // 基于准备好的dom，初始化echarts实例
+        var qcEfficiencyChart = echarts.init(document.getElementById('main'), 'walden');
+
+        // 指定图表的配置项和数据
+        var option = {
+            title : {
+                text : '船时效率分析',
+                left : 'center'
+            },
+            tooltip : {
+                trigger : 'axis',
+                axisPointer : { // 坐标轴指示器，坐标轴触发有效
+                    type : 'shadow' // 默认为直线，可选为：'line' | 'shadow'
+                }
+            },
+            toolbox : {
+                feature : {
+                    saveAsImage : {
+                        show : true
+                    }
+                }
+            },
+            legend : {
+                data : [ 'QC作业量' ],
+                top : 30,
+            },
+            xAxis : [ {
+                type : 'category',
+                data : qcArray,
+                axisLabel : {
+                    interval : 0,
+                    rotate : 60, //控制x轴label角度
+                    textStyle : {
+                        fontSize : 14
+                    }
+                },
+                splitLine : {
+                    show : false
+                }
+            } ],
+            yAxis : [ {
+                type : 'value',
+                name : '作业量',
+                nameLocation : 'middle',
+                nameGap : 45,
+                nameTextStyle : {
+                    fontSize : 15
+                },
+                min : 0,
+                max : 100,
+                interval : 10,
+                axisLabel : {
+                    formatter : '{value}'
+                }
+            }/*, {
+                type : 'value',
+                name : '作业量',
+                nameLocation : 'middle',
+                nameGap : 50,
+                nameTextStyle : {
+                    fontSize : 15
+                },
+                min : 0,
+                max : 100,
+                interval : 10,
+                axisLabel : {
+                    formatter : '{value}'
+                }
+            } */],
+
+            grid : { // 控制图的大小，调整下面这些值就可以，
+                x : 100,
+                x2 : 100,
+                y2 : 190,// y2可以控制 X轴跟Zoom控件之间的间隔，避免以为倾斜后造成 label重叠到zoom上
+            },
+
+            dataZoom : [ {
+                type : 'slider',
+                start : 0,
+                end : 30
+                //slider的默认结束位置，该值可影响柱子的宽度
+            } ],
+            series : [ {
+                name : 'QC101作业量',
+                type : 'bar',
+                barMaxWidth : '60',
+                itemStyle : {
+                    normal : {
+                        color : function(params) { //根据某些条件设置某个柱子单独着色
+                            /**
+                            var colorList = [
+                                '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                                '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                                '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
+                            ];**/
+                            return '#45C2F9';
+                        }
+                    }
+                },
+                label : {
+                    normal : {
+                        show : true,
+                        position : 'top'
+                    }
+                },
+                data : QCjobQuan
+            }/*,{
+                    name : '作业量',
+                    type : 'line',
+                    label : {
+                        normal : {
+                            show : true,
+                            position : 'top'
+                        }
+                    },
+                    yAxisIndex : 1,
+                    data : QCValues
+                } */]
+        };
+
+        //qcEfficiencyChart.clear();
+
+        // 使用刚指定的配置项和数据显示图表。
+        qcEfficiencyChart.setOption(option);
+    }
+
+
+
+</script>
+
+</body>
+</html>

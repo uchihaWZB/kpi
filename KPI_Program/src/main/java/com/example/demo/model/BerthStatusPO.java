@@ -8,7 +8,7 @@ import java.util.Date;
  * Created by WZB on 2017/7/5.
  */
 @Entity
-@Table(name = "bd_berth_status")
+@Table(name = "BERTH_STATUS")
 public class BerthStatusPO implements Serializable {
 
     private static final long serialVersionUID = 1L;

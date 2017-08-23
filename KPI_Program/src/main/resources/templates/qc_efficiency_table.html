@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout" layout:decorator="base/main">
+<!-- layout文件路径-->
+<head>
+<meta charset="utf-8" />
+<title>岸桥效率大表</title>
+<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+	<div layout:fragment="content">
+		<!-- row-->
+		<div class="row">
+			<div class="col-md-12">
+				<!-- BEGIN EXAMPLE TABLE PORTLET-->
+				<div class="portlet light bordered">
+					<div class="portlet-title">
+						<div class="caption font-dark">
+							<!-- <i class="icon-settings font-dark"></i> -->
+							<span class="caption-subject bold uppercase">岸桥效率大表</span>
+						</div>
+						<div class="tools"></div>
+					</div>
+					<div class="portlet-body">
+						<table class="table table-striped table-bordered table-hover" id="bigtable">
+							<thead>
+								<tr>
+									<th>桥吊号</th>
+									<th>平均等指令时间（分钟）</th>
+									<th>平均行大车时间（分钟）</th>
+									<th>平均等待时间（分钟）</th>
+									<th>平均作业时间（分钟）</th>
+								</tr>
+							</thead>
+							<tbody>
+
+								<tr th:each="qc:${list}">
+									<td th:text="${qc.travelingCraneNo}"></td>
+									<td th:text="${qc.waitOfCommandAvg}"></td>
+									<td th:text="${qc.carWorkOfAvg}"></td>
+									<td th:text="${qc.waitOfAvg}"></td>
+									<td th:text="${qc.workOfAvg}"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<!-- END EXAMPLE TABLE PORTLET-->
+			</div>
+		</div>
+		<!-- row-->
+	</div>
+</body>
+</html>

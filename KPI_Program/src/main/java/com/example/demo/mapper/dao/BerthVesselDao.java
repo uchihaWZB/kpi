@@ -21,6 +21,6 @@ public interface BerthVesselDao {
      *
      * @return List
      */
-    @Select("SELECT * FROM BD_BERTH_STATUS")
+    @Select("SELECT * FROM BERTH_STATUS")
     List<BerthStatusPO> getAllBerthStatusPO();
 }
