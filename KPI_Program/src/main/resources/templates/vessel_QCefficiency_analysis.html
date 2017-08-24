@@ -87,7 +87,7 @@
 
         var vesselQCList;
         var qcArray = [];
-        var QCjobQuan = [];
+        var QCjobEff = [];
         //获取船次
         var vessel_voyage = $("#vessel_voyage").val();
         var param = {vessel_voyage:vessel_voyage};
@@ -112,17 +112,17 @@
                         for(var i in vesselQCList){
 
                             qcArray[i] = vesselQCList[i].qc_id;
-                            QCjobQuan[i] = vesselQCList[i].jobQuan;
+                            QCjobEff[i] = vesselQCList[i].jobEff;
                         }
 
-                        showBarGraphJobQuan(qcArray,QCjobQuan);
+                        showBarGraphJobQuan(qcArray,QCjobEff);
                     }
                 }
             }
         });
     }
 
-    function showBarGraphJobQuan(qcArray,QCjobQuan) {
+    function showBarGraphJobQuan(qcArray,QCjobEff) {
 
         // 基于准备好的dom，初始化echarts实例
         var qcEfficiencyChart = echarts.init(document.getElementById('main'), 'walden');
@@ -152,10 +152,16 @@
             },
             xAxis : [ {
                 type : 'category',
+                name : '岸桥编号',
+                nameLocation : 'middle',
+                nameGap : 50,
+                nameTextStyle : {
+                    fontSize : 15
+                },
                 data : qcArray,
                 axisLabel : {
                     interval : 0,
-                    rotate : 60, //控制x轴label角度
+                    //rotate : 60, //控制x轴label角度
                     textStyle : {
                         fontSize : 14
                     }
@@ -166,7 +172,7 @@
             } ],
             yAxis : [ {
                 type : 'value',
-                name : '作业量',
+                name : '效率(作业量/作业时间)',
                 nameLocation : 'middle',
                 nameGap : 45,
                 nameTextStyle : {
@@ -229,7 +235,7 @@
                         position : 'top'
                     }
                 },
-                data : QCjobQuan
+                data : QCjobEff
             }/*,{
                     name : '作业量',
                     type : 'line',
@@ -248,6 +254,78 @@
 
         // 使用刚指定的配置项和数据显示图表。
         qcEfficiencyChart.setOption(option);
+
+        //QC柱状图click事件
+        qcEfficiencyChart.on('click',function(params) {
+
+            reloadPieChart();
+        })
+
+    }
+
+    //加载饼状图
+    function reloadPieChart(){
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart1 = echarts.init(document.getElementById('main1'), 'walden');
+
+        option1 = {
+            title : {
+                text: '岸桥用时分析',
+                subtext: '----',
+                x:'center'
+            },
+            tooltip : {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                orient : 'vertical',
+                x : 'left',
+                data:['耗时1','耗时2','耗时3','耗时4','耗时5']
+            },
+            toolbox: {
+                show : true,
+                feature : {
+                    mark : {show: true},
+                    dataView : {show: true, readOnly: false},
+                    magicType : {
+                        show: true,
+                        type: ['pie', 'funnel'],
+                        option: {
+                            funnel: {
+                                x: '25%',
+                                width: '50%',
+                                funnelAlign: 'left',
+                                max: 1548
+                            }
+                        }
+                    },
+                    restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+            },
+            calculable : true,
+            series : [
+                {
+                    name:'访问来源',
+                    type:'pie',
+                    radius : '55%',
+                    center: ['50%', '60%'],
+                    data:[
+                        {value:335, name:'耗时1'},
+                        {value:310, name:'耗时2'},
+                        {value:234, name:'耗时3'},
+                        {value:135, name:'耗时4'},
+                        {value:1548, name:'耗时5'}
+                    ]
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart1.setOption(option1);
+
     }
 
 

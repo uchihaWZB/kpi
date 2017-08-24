@@ -6,7 +6,7 @@ package com.example.demo.Controller.selectdata;
 public class VesselQCPO {
 
     private String qc_id;
-    private double jobQuan;
+    private double jobEff;
 
     public String getQc_id() {
         return qc_id;
@@ -16,11 +16,11 @@ public class VesselQCPO {
         this.qc_id = qc_id;
     }
 
-    public double getJobQuan() {
-        return jobQuan;
+    public double getJobEff() {
+        return jobEff;
     }
 
-    public void setJobQuan(double jobQuan) {
-        this.jobQuan = jobQuan;
+    public void setJobEff(double jobEff) {
+        this.jobEff = jobEff;
     }
 }

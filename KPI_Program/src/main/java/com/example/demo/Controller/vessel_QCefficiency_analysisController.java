@@ -42,13 +42,7 @@ public class vessel_QCefficiency_analysisController extends BaseAction {
         result.getData().clear();
         System.out.println("vessel_voyage+++++++++   "+vessel_voyage);
 
-        List<VesselQCPO>  vesselQCList  = vessel_QCefficiency_analysisService.getVesselQC();
-
-        /*for (VesselQCPO vesselQCPO: vesselQCList){
-
-            vesselQCPO.getQc_id();
-
-        }*/
+        List<VesselQCPO>  vesselQCList  = vessel_QCefficiency_analysisService.getVesselQC(vessel_voyage);
 
         result.setResult("ok");
         result.getData().put("rows",vesselQCList);
