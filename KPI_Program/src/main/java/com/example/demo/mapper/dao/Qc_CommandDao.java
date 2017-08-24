@@ -4,6 +4,7 @@ import com.example.demo.model.QC_CommandPO;
 
 import com.example.demo.vo.QcJobEfficiencyVO;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -37,14 +38,19 @@ public interface Qc_CommandDao {
      * @return
      */
     @Select("SELECT "
-               + "qcId, "
-               + "created, "
-               + "COUNT(DISTINCT(COMMAND_GKEY)) AS qcWorkCount\n"
+            + "qcId, "
+            + "created, "
+            + "COUNT(DISTINCT(${qcEfficiencyType})) AS qcWorkCount\n"
             +"FROM\n"
-                +" (SELECT COMMAND_GKEY, QC_ID AS qcId, TO_CHAR(CREATED, 'yyyy-mm-dd hh24') AS created\n"
-                +"  FROM QC_COMMANDS)\n"
+            +" (SELECT ${qcEfficiencyType}, QC_ID AS qcId, TO_CHAR(CREATED, 'yyyy-mm-dd hh24') AS created\n"
+            +"  FROM QC_COMMANDS)\n"
+            +"WHERE "
+            +"created >= #{startTime} AND "
+            +"created <= #{endTime}"
             +"GROUP BY created,qcId\n"
             +"ORDER BY created,qcId")
-    List<QcJobEfficiencyVO> getAllQcWorkEfficiencyCount();
+    List<QcJobEfficiencyVO> getAllQcWorkEfficiencyCount(@Param("qcEfficiencyType") String qcEfficiencyType,
+                                                        @Param("startTime") String startTime,
+                                                        @Param("endTime") String endTime);
 
 }

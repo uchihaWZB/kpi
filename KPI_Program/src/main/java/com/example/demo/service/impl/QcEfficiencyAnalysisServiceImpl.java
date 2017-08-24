@@ -6,6 +6,7 @@ import com.example.demo.model.QC_CommandPO;
 import com.example.demo.service.QcEfficiencyAnalysisService;
 
 import com.example.demo.vo.QcJobEfficiencyVO;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +28,10 @@ public class QcEfficiencyAnalysisServiceImpl implements QcEfficiencyAnalysisServ
     }
 
     @Override
-    public List<QcJobEfficiencyVO> getAllQcWorkEfficiencyCount() {
+    public List<QcJobEfficiencyVO> getAllQcWorkEfficiencyCount(@Param("qcEfficiencyType") String qcEfficiencyType,
+                                                               @Param("startTime") String startTime,
+                                                               @Param("endTime") String endTime) {
 
-        return qc_CommandDao.getAllQcWorkEfficiencyCount();
+        return qc_CommandDao.getAllQcWorkEfficiencyCount(qcEfficiencyType, startTime, endTime);
     }
 }

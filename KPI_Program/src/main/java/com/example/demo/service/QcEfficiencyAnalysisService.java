@@ -5,6 +5,7 @@ import com.example.demo.model.QC_CommandPO;
 import java.util.List;
 
 import com.example.demo.vo.QcJobEfficiencyVO;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,5 +24,7 @@ public interface QcEfficiencyAnalysisService {
     /**
      * 获得每个岸桥在固定时间段内的工作总量
      */
-    public List<QcJobEfficiencyVO> getAllQcWorkEfficiencyCount();
+    public List<QcJobEfficiencyVO> getAllQcWorkEfficiencyCount(@Param("qcEfficiencyType") String qcEfficiencyType,
+                                                               @Param("startTime") String startTime,
+                                                               @Param("endTime") String endTime);
 }
