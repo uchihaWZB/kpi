@@ -21,16 +21,16 @@
                 <div class="col-md-12">
                     <div class="portlet light">
                         <div class="portlet-body">
-                            <form action="" th:method="post" class="form-horizontal">
+                            <form id="qcEfficiencyForm" action="/queryQcEfficiencyParams" method="get" class="form-horizontal">
                                 <div class="form-body">
 
                                     <!-- 第一行 -->
                                     <div class="row">
 
-                                        <!-- 查询条件1 -->
+                                        <!-- 查询条件1 日期-->
                                         <div class="col-md-4" layout:fragment="query_condition_1">
                                             <div class="form-group col-md-12">
-                                                <div class="input-group" id="defaultrange">
+                                                <div class="input-group" id="queryDate">
                                                     <input type="text" class="form-control" name="job_date" placeholder="作业日期" />
                                                     <span class="input-group-btn">
 																		<button class="btn default date-range-toggle" type="button">
@@ -41,38 +41,28 @@
                                             </div>
                                         </div>
 
-                                        <!-- 查询条件2 -->
-                                        <!--<div class="col-md-4" layout:fragment="query_condition_2">
+                                        <!-- 查询条件2 切换Box或Cycle-->
+                                        <div class="col-md-4" layout:fragment="query_condition_2">
                                             <div class="form-group col-md-12">
-                                                <select id="job_class" name="job_class"
-                                                        class="form-control select2-multiple select2-allow-clear"
-                                                        multiple="multiple" data-placeholder="作业工班">
-                                                    <option value="1" selected="selected">白班</option>
-                                                    <option value="2" selected="selected">夜班</option>
+                                                <select id="queryBoxOrCycle" name="queryBoxOrCycle"
+                                                        class="form-control select2-allow-clear" data-placeholder="岸桥效率类型">
+                                                    <option></option>
+                                                    <option value="1">按Box进行显示</option>
+                                                    <option value="2">按Cycle进行显示</option>
                                                 </select>
                                             </div>
                                         </div>
+                                    </div>
 
-                                        &lt;!&ndash; 查询条件3 &ndash;&gt;
-                                        <div class="col-md-4" layout:fragment="query_condition_3">
-                                            <div class="form-group col-md-12">
-                                                <select id="job_type" name="job_type"
-                                                        class="form-control select2-multiple select2-allow-clear"
-                                                        multiple="multiple" data-placeholder="作业类型">
-                                                    <option value="1" selected="selected">装船</option>
-                                                    <option value="2" selected="selected">卸船</option>
-                                                </select>
-                                            </div>
-                                        </div>-->
+                                    <div class="row">
 
-
-                                    <div class="form-actions">
+                                        <div class="form-actions">
                                             <div class="col-md-4">
                                                 <button type="button" class="btn green" id="searchBtn">查 询</button>
                                             </div>
+                                        </div>
                                     </div>
 
-                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -85,7 +75,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="portlet light">
-                            <div id="qcEfficiency" style="height: 700px;">
+                            <div id="qcEfficiency" style="height: 600px;">
 
                                 <!-- 用以展示岸桥效率图表 -->
                             </div>
@@ -99,16 +89,24 @@
 
 <script type="text/javascript" layout:fragment="script" th:inline="javascript">
 
-    $(function () {
+    // 全局变量
+    var legendDataOfQcIds = [[${qcIds}]];               // 获取到的Echart legend值 QC_Id
+    var xAxisDataOfCreateds = [[${qcCreateds}]];        // 获取到的Echart xAxis横坐标值 创建时间
+    var QcSeriesLabels = [[${qcSeriesLabels}]];         // Echart中series的分组数据，总组数
+    var QcCountSeries = [[${qcCountSeries}]];           // Echart中series的分组数据，各组总数，折线数据
 
-        var legendDataOfQcIds = [[${qcIds}]];               // 获取到的Echart legend值 QC_Id
-        var xAxisDataOfCreateds = [[${qcCreateds}]];        // 获取到的Echart xAxis横坐标值 创建时间
-        var QcSeriesLabels = [[${qcSeriesLabels}]];         // Echart中series的分组数据，总组数
-        var QcCountSeries = [[${qcCountSeries}]];           // Echart中series的分组数据，各组总数，折线数据
+    var QcEfficiencyType = [[${qcEfficiencyType}]];     // 获取到查询岸桥分时效率的类型
 
-        //var QC_JobEfficiencyList = [[#{qcJobs}]];           // 获取到的QcJobEfficiencyVO记录
+    function initQcEfficiency() {
+        var yAxisName;
+        if (QcEfficiencyType == "TRANSACTION_ID") {
+            yAxisName = '效率（Cycle/小时）';
+        } else {
+            yAxisName = '效率（Box/小时）'
+        }
 
-
+        console.log(QcEfficiencyType);
+        console.log(yAxisName);
         console.log(QcSeriesLabels);
         console.log(QcCountSeries);
 
@@ -139,12 +137,12 @@
         });
         /********组装series的数据 End********/
 
-        var QC_JobEifficiencyEchart = echarts.init(document.getElementById('qcEfficiency'), 'walden');
+        var QC_JobEifficiencyEchart = echarts.init(document.getElementById('qcEfficiency'), 'vintage');
 
         var QC_JobEfficiencyOption = {
             title : {
-                text : '岸桥作业效率',
-                left : 'center'
+                text : '岸桥分时作业效率',
+                left : 'center',
             },
             tooltip : {
                 trigger : 'axis',
@@ -161,7 +159,7 @@
             },
             legend : {
                 data : legendDataOfQcIds,
-                top : 30,
+                top : 40,
             },
             xAxis : [ {
                 type : 'category',
@@ -182,7 +180,7 @@
             } ],
             yAxis : [{
                 type : 'value',
-                name : '效率（数量/小时）',
+                name : yAxisName,
                 nameLocation : 'end',
                 nameTextStyle : {
                     fontSize : 15
@@ -192,6 +190,10 @@
                 x : 100,
                 x2 : 100,
                 y2 : 190,// y2可以控制 X轴跟Zoom控件之间的间隔，避免以为倾斜后造成 label重叠到zoom上
+                top : 120,
+                left : 100,
+                width : 1000,
+                height : 395
             },
             dataZoom : [ {
                 type : 'slider',
@@ -203,6 +205,47 @@
         };
 
         QC_JobEifficiencyEchart.setOption(QC_JobEfficiencyOption);
+    };
+
+    $(function() {
+
+        $('input[name=job_date]').daterangepicker({
+            timePicker : true,          // 显示时间
+            timePicker24Hour : true,    // 24小时制
+            startDate : '1999-01-01',
+            endDate : new Date(),
+            locale : {
+                format : 'YYYY-MM-DD HH',
+                applyLabel: '确认',
+                cancelLabel: '取消',
+                daysOfWeek: ["日","一","二","三","四","五","六"],
+                monthNames: ["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"],
+            }
+        });
+
+        initQcEfficiency();
+    });
+
+    $("#searchBtn").click(function () {
+
+        var params = $("#qcEfficiencyForm").serialize();
+
+        $.ajax({
+            url : 'qc_efficiency_analysis/queryByParams',
+            type : 'GET',
+            data : params,
+            success : function (data) {
+                var result = data.result;
+
+                // 更新查询数据
+                legendDataOfQcIds = result.qcIds;
+                xAxisDataOfCreateds = result.qcCreateds;
+                QcSeriesLabels = result.qcSeriesLabels;
+                QcCountSeries = result.qcCountSeries;
+                QcEfficiencyType = result.qcEfficiencyType;
+                initQcEfficiency();
+            }
+        });
     });
 
 </script>
