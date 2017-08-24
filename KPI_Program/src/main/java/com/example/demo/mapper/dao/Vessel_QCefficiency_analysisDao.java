@@ -18,26 +18,25 @@ public interface Vessel_QCefficiency_analysisDao {
      *
      * @return List
      */
-    /*@Select("select \n" +
-            "     t1.qc_id as qc_id,\n" +
-            "     round(count(t1.command_gkey)/((max(updated) - min(created))*24),2) as jobEff\n" +
-            "from \n" +
-            "     QC_COMMANDS t1\n" +
-            "group by \n" +
-            "     t1.qc_id\n" +
-            "order by\n" +
-            "     t1.qc_id desc")*/
     @Select(
-            "select \n" +
+            "select\n" +
                     "     t1.qc_id as qc_id,\n" +
-                    "     round(count(t1.command_gkey)/((to_date(max(to_char(updated,'YYYY-MM-DD hh24:mi:ss')),'YYYY-MM-DD hh24:mi:ss') -\n" +
-                    "     to_date(min(to_char(created,'YYYY-MM-DD hh24:mi:ss')),'YYYY-MM-DD hh24:mi:ss'))*24),2) as jobEff\n" +
+                    "     round(count(t1.command_gkey)/((to_date(max(to_char(t1.updated,'YYYY-MM-DD hh24:mi:ss')),'YYYY-MM-DD hh24:mi:ss') -\n" +
+                    "     to_date(min(to_char(t1.created,'YYYY-MM-DD hh24:mi:ss')),'YYYY-MM-DD hh24:mi:ss'))*24),2) as jobEff\n" +
                     "from \n" +
-                    "     QC_COMMANDS t1\n" +
+                    "  QC_COMMANDS t1,\n" +
+                    "  QC_ORDERS t2,\n" +
+                    "  WORK_INSTRUCTION_STATUS t3,\n" +
+                    "  QC_WORK_QUEUE_STATUS t4\n" +
+                    "where\n" +
+                    "  t1.order_gkey = t2.order_gkey\n" +
+                    "  and t2.container_wi_ref = t3.container_wi_ref\n" +
+                    "  and t3.work_queue = t4.work_queue\n" +
+                    "  and t4.vessel_visit = #{vessel_voyage}\n" +
                     "group by \n" +
                     "     t1.qc_id\n" +
                     "order by\n" +
-                    "     t1.qc_id desc"
+                    "     t1.qc_id desc\n"
     )
     public List<VesselQCPO> getVesselQC(@Param("vessel_voyage") String vessel_voyage);
 
