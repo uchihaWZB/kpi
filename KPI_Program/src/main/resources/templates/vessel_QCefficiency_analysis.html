@@ -25,12 +25,50 @@
 
                                     <!-- 第一行 -->
                                     <div class="row">
-                                        <div class="col-md-4" layout:fragment="query_condition_2">
+
+
+                                        <!--<div class="col-md-4" layout:fragment="query_condition_1">
                                             <div class="form-group col-md-12">
-                                                <label class="form-label">航次</label>
-                                                <input id="vessel_voyage" name="vessel_voyage" class="form-control"/>
+                                                <select id="vessel_voyage" name="vessel_voyage"
+                                                        class="form-control select2-multiple select2-allow-clear"
+                                                        multiple="multiple" data-placeholder="航次">
+                                                </select>
+                                            </div>
+                                        </div>-->
+
+                                        <div class="col-md-4" layout:fragment="query_condition_1">
+                                            <div class="form-group col-md-12">
+                                                <input id="vessel_voyage" name="vessel_voyage" class="form-control" placeholder="船次"/>
                                             </div>
                                         </div>
+
+                                        <!--<div class="col-md-4" layout:fragment="query_condition_1">
+                                            <select id="vessel_voyage" class="js-data-example-ajax form-control">
+                                                <option value="3620194" selected="selected">航次</option>
+                                            </select>
+                                        </div>-->
+
+                                        <!-- 查询条件2 切换Box或Cycle-->
+                                        <div class="col-md-4" layout:fragment="query_condition_2">
+                                            <div class="form-group col-md-12">
+                                                <select id="queryBoxOrCycle" name="queryBoxOrCycle"
+                                                        class="form-control select2-allow-clear" data-placeholder="船次岸桥效率类型">
+                                                    <option></option>
+                                                    <option value="1">按box进行显示</option>
+                                                    <option value="2">按Cycle进行显示</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!--<div class="col-md-4" layout:fragment="query_condition_4">
+                                            <div class="form-group col-md-12">
+                                                <select id="vessel_voyage1" name="vessel_voyage"
+                                                        class="form-control select2-multiple select2-allow-clear"
+                                                        multiple="multiple" data-placeholder="船名航次">
+
+                                                </select>
+                                            </div>
+                                        </div>-->
                                     </div>
 
                                     <div class="form-actions">
@@ -72,14 +110,62 @@
 <script type="text/javascript" layout:fragment="script">
 
     $(function() {
-
         jobQuanData();
-
         $("#searchBtn").bind("click",function () {
 
             jobQuanData();
             $("#main1").empty();
         })
+
+        //远程筛选
+        /*$("#vessel_voyage").select2({
+            ajax: {
+                url: "/vessel_voyageList",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        vesselInfo: params.term, // search term
+                        page: params.page
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    var vessel_voyageList = data.data.rows;
+                    var vessel_visit = [];
+                    for(var i in vessel_voyageList){
+
+                        vessel_visit[i] = vessel_voyageList[i].vessel_visit;
+                        alert(vessel_visit[i]);
+                    }
+
+                    return {
+                        results: data.items,
+                        pagination: {
+                            more: (params.page * 10) < data.total_count
+                        }
+                    };
+                },
+                /!*results: function (data, page, query) {        //请求成功，接收返回值
+                    var more = (page * 4) < data.result.totalCount;
+                    return { results: data.result.items, more: more };
+                }*!/
+
+                cache: true
+            },
+            escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+            minimumInputLength: 1,
+            templateResult: formatRepoProvince, // omitted for brevity, see the source of this page
+            templateSelection: formatRepoProvince // omitted for brevity, see the source of this page
+        });
+
+        function formatRepoProvince(repo) {
+            if (repo.loading) return repo.text;
+            var markup = "<div>"+repo.name+"</div>";
+            return markup;
+        }*/
+
     });
 
     //加载柱状图
@@ -90,10 +176,23 @@
         var QCjobEff = [];
         //获取船次
         var vessel_voyage = $("#vessel_voyage").val();
-        var param = {vessel_voyage:vessel_voyage};
+
+        var qcEfficiencyType = $("#queryBoxOrCycle").val();
+
+        var param = {vessel_voyage:vessel_voyage,qcEfficiencyType:qcEfficiencyType};
+
+        var yAxisName;
+        if(qcEfficiencyType == '1'){
+
+            yAxisName = '效率(box/小时)';
+        }else if(qcEfficiencyType == '2'){
+            yAxisName = '效率(cycle/小时)';
+        }else{
+            yAxisName = '';
+        }
 
         $.ajax({
-            url: '/vessel_QCefficiency_analysisChart',
+            url: '/vessel_QCefficiency_analysisChart1',
             type: 'GET',
             dataType: 'html',
             timeout: gAjaxTimeout,
@@ -115,14 +214,14 @@
                             QCjobEff[i] = vesselQCList[i].jobEff;
                         }
 
-                        showBarGraphJobQuan(qcArray,QCjobEff);
+                        showBarGraphJobQuan(qcArray,QCjobEff,yAxisName);
                     }
                 }
             }
         });
     }
 
-    function showBarGraphJobQuan(qcArray,QCjobEff) {
+    function showBarGraphJobQuan(qcArray,QCjobEff,yAxisName) {
 
         // 基于准备好的dom，初始化echarts实例
         var qcEfficiencyChart = echarts.init(document.getElementById('main'), 'walden');
@@ -172,7 +271,7 @@
             } ],
             yAxis : [ {
                 type : 'value',
-                name : '效率(作业量/作业时间)',
+                name : yAxisName,
                 nameLocation : 'middle',
                 nameGap : 45,
                 nameTextStyle : {
@@ -184,21 +283,7 @@
                 axisLabel : {
                     formatter : '{value}'
                 }
-            }/*, {
-                type : 'value',
-                name : '作业量',
-                nameLocation : 'middle',
-                nameGap : 50,
-                nameTextStyle : {
-                    fontSize : 15
-                },
-                min : 0,
-                max : 100,
-                interval : 10,
-                axisLabel : {
-                    formatter : '{value}'
-                }
-            } */],
+            }],
 
             grid : { // 控制图的大小，调整下面这些值就可以，
                 x : 100,
@@ -236,21 +321,8 @@
                     }
                 },
                 data : QCjobEff
-            }/*,{
-                    name : '作业量',
-                    type : 'line',
-                    label : {
-                        normal : {
-                            show : true,
-                            position : 'top'
-                        }
-                    },
-                    yAxisIndex : 1,
-                    data : QCValues
-                } */]
+            }]
         };
-
-        //qcEfficiencyChart.clear();
 
         // 使用刚指定的配置项和数据显示图表。
         qcEfficiencyChart.setOption(option);
