@@ -25,8 +25,6 @@
 
                                     <!-- 第一行 -->
                                     <div class="row">
-
-
                                         <!--<div class="col-md-4" layout:fragment="query_condition_1">
                                             <div class="form-group col-md-12">
                                                 <select id="vessel_voyage" name="vessel_voyage"
@@ -36,17 +34,25 @@
                                             </div>
                                         </div>-->
 
-                                        <div class="col-md-4" layout:fragment="query_condition_1">
+                                        <!--<div class="col-md-4" layout:fragment="query_condition_1">
                                             <div class="form-group col-md-12">
                                                 <input id="vessel_voyage" name="vessel_voyage" class="form-control" placeholder="船次"/>
                                             </div>
+                                        </div>-->
+
+
+                                        <div class="col-md-4" layout:fragment="query_condition_1">
+                                            <select id="vessel_voyage" name="vessel_voyage" class="form-control select2" placeholder="重">
+                                            </select>
                                         </div>
 
                                         <!--<div class="col-md-4" layout:fragment="query_condition_1">
                                             <select id="vessel_voyage" class="js-data-example-ajax form-control">
-                                                <option value="3620194" selected="selected">航次</option>
+                                                <option selected="selected">航次</option>
                                             </select>
                                         </div>-->
+
+
 
                                         <!-- 查询条件2 切换Box或Cycle-->
                                         <div class="col-md-4" layout:fragment="query_condition_2">
@@ -117,8 +123,47 @@
             $("#main1").empty();
         })
 
-        //远程筛选
+        loadVesselVoyage();
+    });
+
+    function loadVesselVoyage() {
+
+        /*var data = [{ id: 0, text: 'enhancement' }, { id: 1, text: 'bug' }, { id: 2, text: 'duplicate' }, { id: 3, text: 'invalid' }, { id: 4, text: 'wontfix' }];
+        $("#vessel_voyage").select2({
+            data: data,
+            placeholder:'请选择',
+            allowClear:true
+        })*/
+
         /*$("#vessel_voyage").select2({
+            ajax: {
+                url: "/vessel_voyageList",
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        vesselInfo: params.term, // search term
+                        page: params.page
+                    };
+                },
+                processResults: function (data) {
+                    var noData = [
+                        {id:0,text:'暂无数据22'}
+                    ];
+                    return {
+                        results: noData
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) { return markup; },
+            minimumInputLength: 1,
+            templateResult: formatRepoProvince,
+            templateSelection: formatRepoProvince
+        });*/
+
+        //远程筛选
+        $("#vessel_voyage").select2({
             ajax: {
                 url: "/vessel_voyageList",
                 dataType: 'json',
@@ -134,39 +179,38 @@
 
                     var vessel_voyageList = data.data.rows;
                     var vessel_visit = [];
-                    for(var i in vessel_voyageList){
 
-                        vessel_visit[i] = vessel_voyageList[i].vessel_visit;
-                        alert(vessel_visit[i]);
-                    }
+                     var realNames = new Array();
+                     for(var i in vessel_voyageList){
 
-                    return {
-                        results: data.items,
-                        pagination: {
-                            more: (params.page * 10) < data.total_count
-                        }
-                    };
+                         realNames.push({'id':i,'text':vessel_voyageList[i].vessel_visit});
+                     }
+                     return {
+                         results: realNames
+                     };
                 },
-                /!*results: function (data, page, query) {        //请求成功，接收返回值
-                    var more = (page * 4) < data.result.totalCount;
-                    return { results: data.result.items, more: more };
-                }*!/
-
                 cache: true
             },
-            escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
-            minimumInputLength: 1,
-            templateResult: formatRepoProvince, // omitted for brevity, see the source of this page
-            templateSelection: formatRepoProvince // omitted for brevity, see the source of this page
+            //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+            //minimumInputLength: 1,
+            templateResult: formatRepo // omitted for brevity, see the source of this page
+            //templateSelection: formatRepoProvince // omitted for brevity, see the source of this page
         });
+    }
 
-        function formatRepoProvince(repo) {
-            if (repo.loading) return repo.text;
-            var markup = "<div>"+repo.name+"</div>";
-            return markup;
-        }*/
+    function formatRepo(repo){
 
-    });
+        return repo.text;
+    }
+
+    function formatRepoProvince(repo) {
+
+        alert(repo.loading+"   TTT   "+repo.text+"  UUU  "+repo.name);
+        if (repo.loading) return repo.text;
+        var markup = "<option>"+repo.text+"</option>";
+        return markup;
+    }
+
 
     //加载柱状图
     function jobQuanData(){
@@ -175,10 +219,8 @@
         var qcArray = [];
         var QCjobEff = [];
         //获取船次
-        var vessel_voyage = $("#vessel_voyage").val();
-
+        var vessel_voyage = $("#vessel_voyage").text().trim();
         var qcEfficiencyType = $("#queryBoxOrCycle").val();
-
         var param = {vessel_voyage:vessel_voyage,qcEfficiencyType:qcEfficiencyType};
 
         var yAxisName;
@@ -330,16 +372,58 @@
         //QC柱状图click事件
         qcEfficiencyChart.on('click',function(params) {
 
-            reloadPieChart();
+            var QCID = params.name;
+
+            reloadPieData(QCID);
+            //reloadPieChart();
         })
 
     }
+    function reloadPieData(QCID) {
 
+        var param = {QCID:QCID};
+        var task_type = [];
+        var task_cost = [];
+
+        $.ajax({
+            url: '/getPieData',
+            type: 'GET',
+            dataType: 'html',
+            timeout: gAjaxTimeout,
+            data: param,
+            error: function(xhr, textStatus, thrownError){
+                var err = $.i18n.prop('errors.ajax', xhr.status, textStatus);
+                alert(err);
+            },
+            success: function(response) {
+                var res = eval('(' + response + ')');
+
+                if(res.result == "ok"){
+                    if(res.data != null){
+                        pieDataList = res.data.rows;
+
+                        for(var i in pieDataList){
+
+                            task_type[i] = pieDataList[i].task_type;
+                            task_cost[i] = pieDataList[i].task_cost;
+                        }
+                    }
+                    reloadPieChart(task_type,task_cost);
+                }
+            }
+        });
+    }
     //加载饼状图
-    function reloadPieChart(){
+    function reloadPieChart(task_type,task_cost){
 
         // 基于准备好的dom，初始化echarts实例
         var myChart1 = echarts.init(document.getElementById('main1'), 'walden');
+        var params = [];
+
+        for(var i in task_type){
+
+            params[i] = {value:task_cost[i], name:task_type[i]}
+        }
 
         option1 = {
             title : {
@@ -354,7 +438,8 @@
             legend: {
                 orient : 'vertical',
                 x : 'left',
-                data:['耗时1','耗时2','耗时3','耗时4','耗时5']
+                data: task_type
+                //data:['SpreaderToVessel','SpreaderToAgv','Park','AgvToPlatform','PlatformToVessel','VesselToPlatform']
             },
             toolbox: {
                 show : true,
@@ -384,13 +469,15 @@
                     type:'pie',
                     radius : '55%',
                     center: ['50%', '60%'],
-                    data:[
-                        {value:335, name:'耗时1'},
-                        {value:310, name:'耗时2'},
-                        {value:234, name:'耗时3'},
-                        {value:135, name:'耗时4'},
-                        {value:1548, name:'耗时5'}
-                    ]
+                    data: params
+                    /*data:[
+                        {value:335, name:'SpreaderToVessel'},
+                        {value:310, name:'SpreaderToAgv'},
+                        {value:234, name:'Park'},
+                        {value:135, name:'AgvToPlatform'},
+                        {value:1548, name:'PlatformToVessel'},
+                        {value:1548, name:'VesselToPlatform'}
+                    ]*/
                 }
             ]
         };
@@ -399,8 +486,6 @@
         myChart1.setOption(option1);
 
     }
-
-
 
 </script>
 

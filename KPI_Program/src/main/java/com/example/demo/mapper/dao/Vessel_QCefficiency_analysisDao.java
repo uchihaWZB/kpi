@@ -1,5 +1,6 @@
 package com.example.demo.mapper.dao;
 
+import com.example.demo.Controller.selectdata.QCHomework_time;
 import com.example.demo.Controller.selectdata.VesselList;
 import com.example.demo.Controller.selectdata.VesselQCPO;
 import com.example.demo.model.STS_SHIPTCGPO;
@@ -58,5 +59,22 @@ public interface Vessel_QCefficiency_analysisDao {
                     " where vessel_visit like '%'||#{vesselInfo}||'%'  "
     )
     public List<VesselList> getVessel_voyage(@Param("vesselInfo") String vesselInfo);
+
+    /**
+     * 获得QC耗时记录
+     *
+     * @return List
+     */
+    @Select(
+            "select \n" +
+            "  qc_id as qc_id,\n" +
+            "  task_type as task_type,\n" +
+            "  sum(task_cost) as task_cost \n" +
+            "from \n" +
+            "  TASK_MT \n" +
+            "where qc_id = #{QCID} and task_cost > 0 \n" +
+            "group by qc_id,task_type \n"
+    )
+    public List<QCHomework_time> getPieData(@Param("QCID") String QCID);
 
 }

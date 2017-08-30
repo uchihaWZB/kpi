@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.Controller.selectdata.QCHomework_time;
 import com.example.demo.Controller.selectdata.VesselList;
 import com.example.demo.Controller.selectdata.VesselQCPO;
 import com.example.demo.model.STS_SHIPTCGPO;
@@ -31,4 +32,11 @@ public class Vessel_QCefficiency_analysisServiceImpl implements Vessel_QCefficie
         //System.out.println(vessel_voyage+"&&&&&&&&&&&&&=================&&&&&&&&&&&&&&&&&&&");
         return vessel_QCefficiency_analysisDao.getVessel_voyage(vesselInfo);
     };
+
+    @Override
+    public List<QCHomework_time> getPieData(@Param("QCID") String QCID){
+
+        return vessel_QCefficiency_analysisDao.getPieData(QCID);
+    };
+
 }

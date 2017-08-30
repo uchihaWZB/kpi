@@ -2,6 +2,7 @@ package com.example.demo.Controller;
 
 import com.example.demo.Controller.common.JsonResult;
 import com.example.demo.Controller.jsonobject.JsonQC_CommandPO;
+import com.example.demo.Controller.selectdata.QCHomework_time;
 import com.example.demo.Controller.selectdata.VesselList;
 import com.example.demo.model.QC_CommandPO;
 import com.example.demo.model.STS_SHIPTCGPO;
@@ -68,12 +69,29 @@ public class vessel_QCefficiency_analysisController extends BaseAction {
         //System.out.println(vesselInfo);
 
         List<VesselList> vessel_voyageList = vessel_QCefficiency_analysisService.getVessel_voyage(vesselInfo);
+
+
         System.out.println(vessel_voyageList.get(0).getVessel_visit());
         System.out.println(vessel_voyageList.size()+"UUUUUUUUUUUUUU");
 
         result.getData().put("rows",vessel_voyageList);
         return result;
     }
+
+    @RequestMapping(value = "getPieData",method = RequestMethod.GET)
+    public @ResponseBody JsonResult getPieData(String QCID) {
+
+        System.out.println("++++++++++++加载task耗时信息++++++++++++");
+        //System.out.println(vesselInfo);
+
+        List<QCHomework_time> pieDataList = vessel_QCefficiency_analysisService.getPieData(QCID);
+
+
+        result.setResult("ok");
+        result.getData().put("rows",pieDataList);
+        return result;
+    }
+
 
 
 }
