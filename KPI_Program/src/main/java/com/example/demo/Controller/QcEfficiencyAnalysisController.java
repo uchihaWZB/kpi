@@ -175,6 +175,7 @@ public class QcEfficiencyAnalysisController extends BaseAction{
         return result;
     }
 
+
     /**
      * 根据岸桥效率的类型统计每台QC的分时效率 （核心业务）
      *
