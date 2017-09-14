@@ -25,56 +25,23 @@
 
                                     <!-- 第一行 -->
                                     <div class="row">
-                                        <!--<div class="col-md-4" layout:fragment="query_condition_1">
-                                            <div class="form-group col-md-12">
-                                                <select id="vessel_voyage" name="vessel_voyage"
-                                                        class="form-control select2-multiple select2-allow-clear"
-                                                        multiple="multiple" data-placeholder="航次">
-                                                </select>
-                                            </div>
-                                        </div>-->
-
-                                        <!--<div class="col-md-4" layout:fragment="query_condition_1">
-                                            <div class="form-group col-md-12">
-                                                <input id="vessel_voyage" name="vessel_voyage" class="form-control" placeholder="船次"/>
-                                            </div>
-                                        </div>-->
-
 
                                         <div class="col-md-4" layout:fragment="query_condition_1">
-                                            <select id="vessel_voyage" name="vessel_voyage" class="form-control select2" placeholder="重">
+                                            <select id="vessel_voyage" name="vessel_voyage" class="form-control select2" placeholder="船次">
                                             </select>
                                         </div>
-
-                                        <!--<div class="col-md-4" layout:fragment="query_condition_1">
-                                            <select id="vessel_voyage" class="js-data-example-ajax form-control">
-                                                <option selected="selected">航次</option>
-                                            </select>
-                                        </div>-->
-
-
 
                                         <!-- 查询条件2 切换Box或Cycle-->
                                         <div class="col-md-4" layout:fragment="query_condition_2">
                                             <div class="form-group col-md-12">
                                                 <select id="queryBoxOrCycle" name="queryBoxOrCycle"
-                                                        class="form-control select2-allow-clear" data-placeholder="船次岸桥效率类型">
+                                                        class="form-control select2-allow-clear" data-placeholder="--请选择岸桥效率类型--">
                                                     <option></option>
                                                     <option value="1">按box进行显示</option>
                                                     <option value="2">按Cycle进行显示</option>
                                                 </select>
                                             </div>
                                         </div>
-
-                                        <!--<div class="col-md-4" layout:fragment="query_condition_4">
-                                            <div class="form-group col-md-12">
-                                                <select id="vessel_voyage1" name="vessel_voyage"
-                                                        class="form-control select2-multiple select2-allow-clear"
-                                                        multiple="multiple" data-placeholder="船名航次">
-
-                                                </select>
-                                            </div>
-                                        </div>-->
                                     </div>
 
                                     <div class="form-actions">
@@ -164,6 +131,8 @@
 
         //远程筛选
         $("#vessel_voyage").select2({
+            placeholder: "--请选择船次--",
+
             ajax: {
                 url: "/vessel_voyageList",
                 dataType: 'json',

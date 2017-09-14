@@ -258,8 +258,18 @@
 								</a>
 							</li>
 							<li class="nav-item ">
+								<a href="qc_MTjobtime.html" class="nav-link ">
+									<span class="title">主小车作业耗时分析</span>
+								</a>
+							</li>
+							<li class="nav-item ">
 								<a href="qc_MTandPT_jobtime.html" class="nav-link ">
 									<span class="title">主副小车作业时间</span>
+								</a>
+							</li>
+							<li class="nav-item ">
+								<a href="qc_comand_consumtime.html" class="nav-link ">
+									<span class="title">岸桥指令层耗时分析</span>
 								</a>
 							</li>
 							<li class="nav-item  ">
@@ -449,7 +459,7 @@
 		<!-- BEGIN CONTENT -->
 		<div class="page-content-wrapper">
 			<!-- BEGIN CONTENT BODY -->
-			<div class="page-content">
+			<div class="page-content" id="content">
 				<!-- BEGIN PAGE HEADER-->
 				<!-- BEGIN THEME PANEL -->
 				<!-- END THEME PANEL -->
@@ -719,19 +729,26 @@
 <script type="text/javascript">
     var activeLink = function() {
         var url = location.pathname;
+        console.log("url1 = " + url);
         var menu = $('.page-sidebar-menu');
+        console.log("menu1 = " + menu);
         var el = null;
         menu.find('li > a').each(function() {
             var path = $(this).attr('href');
             if (path) {
                 path = path.toLowerCase();
+
                 if (url.substr(-1 * path.length) == path) {
+                    console.log("6666666666666");
+                    //console.log("WWWW = " + url.substr(-1 * path.length));
                     el = $(this);
                     return;
                 }
             }
         });
+
         if (el) {
+            console.log("88888888888888888");
             el.parents('li').each(
                 function() {
                     $(this).addClass('active');
@@ -747,12 +764,15 @@
 <script type="text/javascript">
     var activeForm = function() {
         var url = location.pathname;
+        console.log("url2 = " + url);
         var action = url.replace("/", "").replace(".html", "");
         console.log("action = " + action)
         var query = "query_" + action;
+
         $('form').attr('action', query);
     };
     activeForm();
+
 </script>
 <script type="text/javascript" layout:fragment="script">
 

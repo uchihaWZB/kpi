@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.log4j.Logger;
 
 /**
  * Created by gcq on 2017/9/1.
@@ -26,6 +27,8 @@ import java.util.List;
 @Controller
 @RequestMapping("/")
 public class qc_MTandPT_jobtimeController extends BaseAction {
+
+    private static Logger logger = Logger.getLogger(qc_MTandPT_jobtimeController.class);
 
     @Autowired
     private MT_PTjobtimeService mT_PTjobtimeService;
@@ -41,6 +44,15 @@ public class qc_MTandPT_jobtimeController extends BaseAction {
     public @ResponseBody JsonResult getMT_PTjobtimedata(String startDateTime,String endDateTime,String craneNum) {
 
         System.out.println("+++++++++++++++获取主副小车作业时间++++++++++++++++++++");
+        /*// 记录debug级别的信息
+        logger.debug("This is debug message.");
+        // 记录info级别的信息
+        logger.info("This is info message.");
+        // 记录warn级别的信息
+        logger.info("This is warn message.");
+        // 记录error级别的信息
+        logger.error("This is error message.");*/
+
         List<JsonMT_PTjobtime> jsonMTjobtimeList = new LinkedList<JsonMT_PTjobtime>();
         List<JsonMT_PTjobtime> jsonPTjobtimeList = new LinkedList<JsonMT_PTjobtime>();
         List<MT_PTjobtime> MT_PTjobtimeList = mT_PTjobtimeService.getMT_PTjobtimedata(startDateTime,endDateTime,craneNum);
