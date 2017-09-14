@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="base/main">
+<head>
+    <meta charset="UTF-8">
+    <title>船时效率分析</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+
+<div class="page-content-wrapper">
+    <div class="page-content">
+
+        <div layout:fragment="content">
+
+            <!-- 查询模块 -->
+            <div layout:fragment="query">
+                <div class="col-md-12">
+                    <div class="portlet light">
+                        <div class="portlet-body">
+                            <form action="" th:method="post" class="form-horizontal">
+                                <div class="form-body">
+
+                                    <!-- 第一行 -->
+                                    <div class="row">
+
+                                        <div class="col-md-4" layout:fragment="query_condition_1">
+                                            <select id="craneNum" name="craneNum"
+                                                    class="form-control select2-allow-clear" data-placeholder="岸桥编号">
+                                                <option value="101">101</option>
+                                                <option value="102">102</option>
+                                                <option value="103">103</option>
+                                                <option value="104">104</option>
+                                                <option value="105">105</option>
+                                                <option value="106">106</option>
+                                                <option value="107">107</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- 查询条件1 日期-->
+                                        <div class="col-md-4" layout:fragment="query_condition_1">
+                                            <div class="form-group col-md-12">
+                                                <div class="input-group" id="queryDate">
+                                                    <input type="text" class="form-control" name="job_date" placeholder="作业日期" />
+                                                    <span class="input-group-btn">
+																		<button class="btn default date-range-toggle" type="button">
+																			<i class="fa fa-calendar"></i>
+																		</button>
+													</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                                <button type="button" class="btn green" id="searchBtn">查 询</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 数据展示模块 -->
+            <div layout:fragment="data">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="portlet light">
+                            <div id="main" style="height: 500px;"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" layout:fragment="script">
+
+    $(function() {
+
+        $('input[name=job_date]').daterangepicker({
+            timePicker: true, //显示时间
+            timePicker24Hour: true, //24小时制
+            //language:'zh-CN',//这个是语言是中文
+            locale:{
+                format: 'YYYY-MM-DD HH:mm:ss',
+                applyLabel: '确认',
+                cancelLabel: '取消'
+            }
+        }, function (start, end, label) {
+
+            //startDateTime = start.format('YYYY-MM-DD HH:mm:ss');
+            //endDateTime = end.format('YYYY-MM-DD HH:mm:ss');
+        });
+
+        getMT_PTjobtimedata();
+
+        $("#searchBtn").bind("click",function () {
+            getMT_PTjobtimedata();
+        })
+    });
+
+    function getMT_PTjobtimedata(){
+
+        //获取作业时间
+        var dateTime = $("[name='job_date']").val();
+        var startDateTime;
+        var endDateTime;
+
+        if(dateTime != null && dateTime != ""){
+
+            var ss = dateTime.split(" - ");
+            startDateTime = ss[0];
+            endDateTime = ss[1];
+        }
+
+        var craneNum = $("#craneNum").val();
+        var param = {startDateTime:startDateTime,endDateTime:endDateTime,craneNum:craneNum};
+
+        $.ajax({
+            url: '/getMTjobtimedata',
+            type: 'GET',
+            dataType: 'html',
+            timeout: gAjaxTimeout,
+            data: param,
+            error: function(xhr, textStatus, thrownError){
+                var err = $.i18n.prop('errors.ajax', xhr.status, textStatus);
+                alert('err');
+            },
+            success: function(response) {
+                var res = eval('(' + response + ')');
+
+                if(res.result == "ok"){
+                    if(res.data != null){
+
+                        var MTSLjobtimeList = [];
+                        var MTALjobtimeList = [];
+                        MTSLjobtimeList = res.data.rowsMTSL;
+                        MTALjobtimeList = res.data.rowsMTAL;
+
+                        showMT_PTjobtime(MTSLjobtimeList,MTALjobtimeList);
+                    }
+                }
+            }
+        });
+    };
+
+
+    function showMT_PTjobtime(MTSLjobtimeList,MTALjobtimeList) {
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart1 = echarts.init(document.getElementById('main'), 'walden');
+
+        var createTime = [];
+        var MTSLjobtime = [];
+        var MTALjobtime = [];
+        var info = [];
+
+        MTSLjobtimeList.forEach(function(item, index){
+
+            createTime[index] = [];
+            createTime[index].push(item.createTimedDisp);
+
+            MTSLjobtime[index] = [];
+            MTSLjobtime[index].push(item.createTimedDisp);
+            MTSLjobtime[index].push(item.jobtime);
+        });
+
+        MTALjobtimeList.forEach(function(item, index){
+
+            MTALjobtime[index] = [];
+            MTALjobtime[index].push(item.createTimedDisp);
+            MTALjobtime[index].push(item.jobtime);
+        });
+
+        var markLineOpt = {
+            animation : false,
+            label : {
+                normal : {
+                    formatter : '(示例)',
+                    textStyle : {
+                        align : 'right'
+                    }
+                }
+            },
+            lineStyle : {
+                normal : {
+                    type : 'solid'
+                }
+            },
+            data : [ [ {
+                coord : [ 0, 17 ],
+                symbol : 'none'
+            }, {
+                coord : [ 4500, 33 ],
+                symbol : 'none'
+            } ] ]
+        };
+
+        option = {
+            title : {
+                text : '岸桥主小车Start lift和Auto land分析',
+                x:'center',//水平安放位置，默认为'left'，可选为：'center' | 'left' | 'right' | {number}（x坐标，单位px）
+                //y: 'top',//垂直安放位置，默认为top，可选为：'top' | 'bottom' | 'center' | {number}（y坐标，单位px）
+                left : 'center'
+            },
+            grid : [ {
+                x : 100,
+                x2 : 100,
+                y2 : 100,
+            } ],
+            tooltip : {
+                trigger: 'axis',
+                axisPointer:{
+                    show: true,
+                    type : 'cross',
+                    lineStyle: {
+                        type : 'dashed',
+                        width : 1
+                    }
+                }
+            },
+            toolbox: {
+                show : true,
+                feature : {
+                    mark : {show: true},
+                    dataView : {show: true, readOnly: false},
+                    restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+            },
+            dataZoom: {
+                show: true,
+                start : 30,
+                end : 70
+            },
+            color:['#11abff',  '#F0805A'],
+            legend : {
+                data : ['Start lift耗时', 'Auto land耗时'],
+                y:30
+            },
+            xAxis : [ {
+                type : 'time',
+                splitNumber:10,
+                //data: createTime,
+                name : '作业时间',
+                nameLocation : 'middle',
+                nameGap : 50,
+                nameTextStyle : {
+                    fontSize : 15
+                },
+                axisLabel : {
+                    interval: 0,
+                    //rotate : 60, //控制x轴label角度
+                    textStyle : {
+                        fontSize : 14
+                    }
+                },
+                splitLine : {
+                    show : true
+                }
+            } ],
+            yAxis : [ {
+                type : 'value',
+                name : '作业时间(秒)',
+                nameLocation : 'middle',
+                nameGap : 45,
+                nameTextStyle : {
+                    fontSize : 15
+                },
+                min : 0,
+                max : 50,
+                interval : 5,
+                axisLabel : {
+                    formatter : '{value}'
+                }
+            } ],
+            series : [ {
+                name : 'Start lift耗时',
+                type : 'scatter',
+                data : MTSLjobtime,
+                tooltip:{
+                    formatter : function(params, ticket, callback) {
+                        return  '('
+                            + MTSLjobtime[params.dataIndex][0] + '  ,  '
+                            + MTSLjobtime[params.dataIndex][1] + ')';
+                    }
+                },
+                markPoint : {
+                    data : [
+                        {type : 'max', name: '最大值'},
+                        {type : 'min', name: '最小值'}
+                    ]
+                },
+                markLine : {
+                    /*itemStyle:{
+                        normal:{
+                            label:{
+                                show: true,
+                                position:'outer'
+                            }
+                        }
+                //normal:{lineStyle:{type:'solid',color:'#000'}}
+                        //label:{show:false,position:'left'}
+                        //type: 'dash',
+                    },*/
+                    data : [
+                        { name: '标准值', yAxis: 10},
+                        {type : 'average', name: '平均值'}
+                    ]
+                }
+            },{
+                name : 'Auto land耗时',
+                type : 'scatter',
+                data : MTALjobtime,
+                tooltip:{
+                    formatter : function(params, ticket, callback) {
+                        return  '('
+                            + MTALjobtime[params.dataIndex][0] + '  ,  '
+                            + MTALjobtime[params.dataIndex][1] + ')';
+                    }
+                },
+                markPoint : {
+                    data : [
+                        {type : 'max', name: '最大值'},
+                        {type : 'min', name: '最小值'}
+                    ]
+                },
+                markLine : {
+                    data : [
+                                { name: '标准值', yAxis: 12},
+                                {type : 'average', name: '平均值'}
+                        ]
+                }
+            } ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart1.setOption(option);
+    }
+
+</script>
+
+</body>
+</html>

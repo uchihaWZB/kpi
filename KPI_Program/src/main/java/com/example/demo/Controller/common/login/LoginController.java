@@ -79,10 +79,10 @@ public class LoginController {
         }
     }
 
-    @RequestMapping(value = "/logout", method = RequestMethod.POST)
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public String logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-
-        httpServletRequest.getSession().removeAttribute("/");
+        System.out.println("*****logout*******");
+        //httpServletRequest.getSession().removeAttribute("/");
 
         return "login";
     }

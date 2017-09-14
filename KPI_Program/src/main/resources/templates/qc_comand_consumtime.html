@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorator="base/main">
+<head>
+    <meta charset="UTF-8">
+    <title>船时效率分析</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+<body>
+
+<div class="page-content-wrapper">
+    <div class="page-content">
+
+        <div layout:fragment="content">
+
+            <!-- 查询模块 -->
+            <div layout:fragment="query">
+                <div class="col-md-12">
+                    <div class="portlet light">
+                        <div class="portlet-body">
+                            <form action="" th:method="post" class="form-horizontal">
+                                <div class="form-body">
+
+                                    <!-- 第一行 -->
+                                    <div class="row">
+
+                                        <div class="col-md-4" layout:fragment="query_condition_1">
+                                            <select id="craneNum" name="craneNum"
+                                                    class="form-control select2-allow-clear" data-placeholder="岸桥编号">
+                                                <option value="QC101">QC101</option>
+                                                <option value="QC102">QC102</option>
+                                                <option value="QC103">QC103</option>
+                                                <option value="QC104">QC104</option>
+                                                <option value="QC105">QC105</option>
+                                                <option value="QC106">QC106</option>
+                                                <option value="QC107">QC107</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- 查询条件1 日期-->
+                                        <div class="col-md-4" layout:fragment="query_condition_1">
+                                            <div class="form-group col-md-12">
+                                                <div class="input-group" id="queryDate">
+                                                    <input type="text" class="form-control" name="job_date" placeholder="作业日期" />
+                                                    <span class="input-group-btn">
+																		<button class="btn default date-range-toggle" type="button">
+																			<i class="fa fa-calendar"></i>
+																		</button>
+													</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="form-actions">
+                                        <div class="row">
+                                            <div class="col-md-9">
+                                                <button type="button" class="btn green" id="searchBtn">查 询</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 数据展示模块 -->
+            <div layout:fragment="data">
+                <!--<div class="row">
+
+                </div>-->
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="portlet light">
+                            <div id="main1" style="height: 450px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="portlet light">
+                            <div id="main" style="height: 450px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="portlet light">
+                            <div id="main2" style="height: 450px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" layout:fragment="script">
+
+    $(function() {
+
+        $('input[name=job_date]').daterangepicker({
+            timePicker: true, //显示时间
+            timePicker24Hour: true, //24小时制
+            //language:'zh-CN',//这个是语言是中文
+            locale:{
+                format: 'YYYY-MM-DD HH:mm:ss',
+                applyLabel: '确认',
+                cancelLabel: '取消'
+            }
+        });
+
+        $("#searchBtn").bind("click",function () {
+
+            search();
+        })
+    });
+
+    function search() {
+
+        //获取作业时间
+        var dateTime = $("[name='job_date']").val();
+        var startDateTime;
+        var endDateTime;
+
+        if(dateTime != null && dateTime != ""){
+
+            var ss = dateTime.split(" - ");
+            startDateTime = ss[0];
+            endDateTime = ss[1];
+        }
+
+        var craneNum = $("#craneNum").val();
+        var param = {startDateTime:startDateTime,endDateTime:endDateTime,craneNum:craneNum};
+
+        insConsumTimeData(param);
+        insGapData(param);
+        InsTimeData(param);
+
+        $("#main").empty();
+        $("#main1").empty();
+        $("#main2").empty();
+    }
+    //获取指令作业和间隔总计耗时数据
+    function insConsumTimeData(param) {
+
+        var consumTotalList;
+        var consumName = [];
+        var consumTime = [];
+        var qcid;
+
+        $.ajax({
+            url: '/consumTotalTimeAnalysis',
+            type: 'GET',
+            dataType: 'html',
+            timeout: gAjaxTimeout,
+            data: param,
+            error: function(xhr, textStatus, thrownError){
+                var err = $.i18n.prop('errors.ajax', xhr.status, textStatus);
+                alert(err);
+            },
+            success: function(response) {
+                var res = eval('(' + response + ')');
+
+                if(res.result == "ok"){
+                    if(res.data != null){
+                        consumTotalList = res.data.consumTotalList;
+
+                        for(var i in consumTotalList){
+
+                            consumName[i] = consumTotalList[i].consumName;
+                            consumTime[i] = consumTotalList[i].consumTime;
+                        }
+
+                        qcid = consumTotalList[0].qcid;
+                        reloadConSumChart(consumName,consumTime,qcid);
+                    }
+                }
+            }
+        });
+    }
+
+    //加载指令作业和间隔总计耗时数据
+    function reloadConSumChart(consumName,consumTime,qcid){
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart1 = echarts.init(document.getElementById('main'), 'walden');
+
+        var params = [];
+
+        for(var i in consumName){
+
+            params[i] = {value:consumTime[i], name:consumName[i]}
+        }
+
+        option1 = {
+            title : {
+                text: '指令间隔和指令时间分析',
+                subtext: qcid,
+                x:'center'
+            },
+            tooltip : {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                top: 40,
+                orient : 'vertical',
+                x : 'left',
+                data: consumName
+            },
+            toolbox: {
+                show : true,
+                feature : {
+                    mark : {show: true},
+                    dataView : {show: true, readOnly: false},
+                    magicType : {
+                        show: true,
+                        type: ['pie', 'funnel'],
+                        option: {
+                            funnel: {
+                                x: '25%',
+                                width: '50%',
+                                funnelAlign: 'left',
+                                max: 1548
+                            }
+                        }
+                    },
+                    restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+            },
+            calculable : true,
+            series : [
+                {
+                    name:'访问来源',
+                    type:'pie',
+                    radius : '55%',
+                    center: ['50%', '60%'],
+                    data: params
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart1.setOption(option1);
+}
+
+    //获取指令间隔时间数据
+    function insGapData(param) {
+
+        var Ins_GapList;
+        var consumName = [];
+        var gapTime = [];
+        var qcId;
+
+        $.ajax({
+            url: '/insGapAnalysis',
+            type: 'GET',
+            dataType: 'html',
+            timeout: gAjaxTimeout,
+            data: param,
+            error: function(xhr, textStatus, thrownError){
+                var err = $.i18n.prop('errors.ajax', xhr.status, textStatus);
+                alert(err);
+            },
+            success: function(response) {
+                var res = eval('(' + response + ')');
+
+                if(res.result == "ok"){
+                    if(res.data != null){
+                        Ins_GapList = res.data.Ins_GapList;
+
+                        for(var i in Ins_GapList){
+
+                            consumName[i] = Ins_GapList[i].consumName;
+                            gapTime[i] = Ins_GapList[i].gapTime;
+
+                        }
+                        qcId = Ins_GapList[0].qcid;
+                        reloadGapChart(consumName,gapTime,qcId);
+                    }
+                }
+            }
+        });
+    }
+
+    //加载指令间隔时间数据
+    function reloadGapChart(consumName,gapTime,qcId){
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart1 = echarts.init(document.getElementById('main1'), 'walden');
+
+        var params = [];
+
+        for(var i in consumName){
+
+            params[i] = {value:gapTime[i], name:consumName[i]}
+        }
+
+
+        option1 = {
+            title : {
+                text: '指令间隔耗时分析',
+                subtext: qcId,
+                x:'center'
+            },
+            tooltip : {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                top: 40,
+                orient : 'vertical',
+                x : 'left',
+                data: consumName
+            },
+            toolbox: {
+                show : true,
+                feature : {
+                    mark : {show: true},
+                    dataView : {show: true, readOnly: false},
+                    magicType : {
+                        show: true,
+                        type: ['pie', 'funnel'],
+                        option: {
+                            funnel: {
+                                x: '25%',
+                                width: '50%',
+                                funnelAlign: 'left',
+                                max: 1548
+                            }
+                        }
+                    },
+                    restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+            },
+            calculable : true,
+            series : [
+                {
+                    name:'访问来源',
+                    type:'pie',
+                    radius : '55%',
+                    center: ['50%', '60%'],
+                    data: params
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart1.setOption(option1);
+
+
+    }
+
+    //获取指令作业时间数据
+    function InsTimeData(param) {
+
+        var Ins_GapList;
+        var consumName = [];
+        var jobTime = [];
+        var qcid;
+
+        $.ajax({
+            url: '/InsTimeAnalysis',
+            type: 'GET',
+            dataType: 'html',
+            timeout: gAjaxTimeout,
+            data: param,
+            error: function(xhr, textStatus, thrownError){
+                var err = $.i18n.prop('errors.ajax', xhr.status, textStatus);
+                alert(err);
+            },
+            success: function(response) {
+                var res = eval('(' + response + ')');
+
+                if(res.result == "ok"){
+                    if(res.data != null){
+                        Ins_TimeList = res.data.Ins_TimeList;
+
+                        for(var i in Ins_TimeList){
+
+                            consumName[i] = Ins_TimeList[i].consumName;
+                            jobTime[i] = Ins_TimeList[i].jobTime;
+                        }
+                        qcid = Ins_TimeList[0].qcid;
+                        reloadInsTimeChart(consumName,jobTime,qcid);
+                    }
+                }
+            }
+        });
+    }
+
+    //加载指令作业时间数据
+    function reloadInsTimeChart(consumName,jobTime,qcid){
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart1 = echarts.init(document.getElementById('main2'), 'walden');
+
+        var params = [];
+
+        for(var i in consumName){
+
+            params[i] = {value:jobTime[i], name:consumName[i]}
+        }
+
+        option1 = {
+            title : {
+                text: '指令用时分析',
+                subtext: qcid,
+                x:'center'
+            },
+            tooltip : {
+                trigger: 'item',
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
+            legend: {
+                top: 40,
+                orient : 'vertical',
+                x : 'left',
+                data: consumName
+            },
+            toolbox: {
+                show : true,
+                feature : {
+                    mark : {show: true},
+                    dataView : {show: true, readOnly: false},
+                    magicType : {
+                        show: true,
+                        type: ['pie', 'funnel'],
+                        option: {
+                            funnel: {
+                                x: '25%',
+                                width: '50%',
+                                funnelAlign: 'left',
+                                max: 1548
+                            }
+                        }
+                    },
+                    restore : {show: true},
+                    saveAsImage : {show: true}
+                }
+            },
+            calculable : true,
+            series : [
+                {
+                    name:'访问来源',
+                    type:'pie',
+                    radius : '55%',
+                    center: ['50%', '60%'],
+                    data: params
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart1.setOption(option1);
+
+
+    }
+</script>
+
+</body>
+</html>
