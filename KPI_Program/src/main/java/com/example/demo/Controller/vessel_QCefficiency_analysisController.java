@@ -92,6 +92,4 @@ public class vessel_QCefficiency_analysisController extends BaseAction {
         return result;
     }
 
-
-
 }
