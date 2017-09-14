@@ -140,10 +140,6 @@
         insConsumTimeData(param);
         insGapData(param);
         InsTimeData(param);
-
-        $("#main").empty();
-        $("#main1").empty();
-        $("#main2").empty();
     }
     //获取指令作业和间隔总计耗时数据
     function insConsumTimeData(param) {
@@ -214,6 +210,7 @@
                 data: consumName
             },
             toolbox: {
+                top: 30,
                 show : true,
                 feature : {
                     mark : {show: true},
@@ -320,6 +317,7 @@
                 data: consumName
             },
             toolbox: {
+                top: 30,
                 show : true,
                 feature : {
                     mark : {show: true},
@@ -426,6 +424,7 @@
                 data: consumName
             },
             toolbox: {
+                top: 30,
                 show : true,
                 feature : {
                     mark : {show: true},
