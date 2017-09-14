@@ -1,10 +1,577 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="headfile">
+
+    <title th:text="${title}"></title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSS文件 START -->
+    <link th:href="@{/my-plugins/bootstrap/css/bootstrap.min.css}"
+             href="../../static/my-plugins/bootstrap/css/bootstrap.min.css"
+             rel="stylesheet" type="text/css" />
+    <link th:href="@{/my-plugins/font-awesome/css/font-awesome.min.css}"
+             href="../../static/my-plugins/font-awesome/css/font-awesome.min.css"
+             rel="stylesheet" type="text/css" />
+    <link th:href="@{/my-plugins/morrisjs/morris.css}"
+             href="../../static/my-plugins/morrisjs/morris.css"
+             rel="stylesheet" type="text/css" />
+    <link th:href="@{/my-plugins/metisMenu/metisMenu.css}"
+             href="../../static/my-plugins/metisMenu/metisMenu.css"
+             rel="stylesheet" type="text/css" />
+    <link th:href="@{/my-plugins/frame1/css/sb-admin-2.css}"
+             href="../../static/my-plugins/frame1/css/sb-admin-2.css"
+             rel="stylesheet" type="text/css" />
+    <!-- CSS文件 END -->
+    <style>
+        nav>a.dropdown-toggle{
+            color: rgb(248, 248, 248);
+        }
+    </style>
+
+    <!-- Script文件 START -->
+    <script th:src="@{/my-plugins/jquery/jquery.min.js}"
+               src="../../static/my-plugins/jquery/jquery.min.js"></script>
+    <script th:src="@{/my-plugins/bootstrap/js/bootstrap.min.js}"
+               src="../../static/my-plugins/bootstrap/js/bootstrap.min.js"></script>
+    <script th:src="@{/my-plugins/morrisjs/morris.min.js}"
+               src="../../static/my-plugins/morrisjs/morris.min.js"></script>
+    <script th:src="@{/my-plugins/metisMenu/metisMenu.min.js}"
+            src="../../static/my-plugins/metisMenu/metisMenu.min.css"></script>
+    <script th:src="@{/my-plugins/raphael/raphael.min.js}"
+            src="../../static/my-plugins/raphael/raphael.min.js"></script>
+    <script th:src="@{/my-plugins/frame1/js/sb-admin-2.js}"
+            src="../../static/my-plugins/frame1/js/sb-admin-2.js"></script>
+    <!-- Script文件 START -->
 </head>
+
 <body>
+
+<!-- 标头导航栏框架 -->
+<div th:fragment="header">
+    <div class="page-header navbar navbar-fixed-top">
+        <!-- BEGIN HEADER INNER -->
+        <div class="page-header-inner ">
+            <!-- BEGIN LOGO -->
+            <div class="page-logo">
+                <a href="#">
+                    <img src="img/logo.png" alt="logo" class="logo-default" />
+                </a>
+                <div class="menu-toggler sidebar-toggler">
+                    <span></span>
+                </div>
+            </div>
+            <!-- END LOGO -->
+            <!-- BEGIN RESPONSIVE MENU TOGGLER -->
+            <a href="javascript:;" class="menu-toggler responsive-toggler"
+               data-toggle="collapse" data-target=".navbar-collapse">
+                <span></span>
+            </a>
+            <!-- END RESPONSIVE MENU TOGGLER -->
+            <!-- BEGIN TOP NAVIGATION MENU -->
+            <div class="top-menu">
+                <ul class="nav navbar-nav pull-right">
+                    <!-- BEGIN NOTIFICATION DROPDOWN -->
+                    <!-- END NOTIFICATION DROPDOWN -->
+                    <!-- BEGIN INBOX DROPDOWN -->
+                    <!-- END INBOX DROPDOWN -->
+                    <!-- BEGIN TODO DROPDOWN -->
+                    <!-- END TODO DROPDOWN -->
+                    <!-- BEGIN USER LOGIN DROPDOWN -->
+                    <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte -->
+                    <li class="dropdown dropdown-dark dropdown-user">
+                        <a href="javascript:;" class="dropdown-toggle"
+                           data-toggle="dropdown" data-hover="dropdown"
+                           data-close-others="true">
+                            <!-- <img alt="" class="img-circle" src="../assets/layouts/layout/img/avatar3_small.jpg" />
+                                <span class="username username-hide-on-mobile"> Nick </span> -->
+                            <i class="icon-user"></i> <span class="username " th:text="${currentUser}"></span> <i
+                                class="fa fa-angle-down"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-default">
+                            <li>
+                                <a href="logout.html">
+                                    <i class="icon-logout "></i>退出系统
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <!-- END USER LOGIN DROPDOWN -->
+                    <!-- BEGIN QUICK SIDEBAR TOGGLER -->
+                    <!-- END QUICK SIDEBAR TOGGLER -->
+                </ul>
+            </div>
+            <!-- END TOP NAVIGATION MENU -->
+        </div>
+        <!-- END HEADER INNER -->
+    </div>
+</div>
+
+<nav th:fragment="navbar-header" class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">
+                <img src="img/logo.png" alt="logo" class="logo-default" />
+            </a>
+        </div>
+
+        <ul class="nav navbar-top-links navbar-right">
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-envelope fa-fw"></i> <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-messages">
+                    <li>
+                        <a href="#">
+                            <div>
+                                <strong>John Smith</strong>
+                                <span class="pull-right text-muted">
+                                        <em>Yesterday</em>
+                                    </span>
+                            </div>
+                            <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend...</div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                </ul>
+            </li>
+
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-tasks fa-fw"></i> <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-tasks">
+                    <li>
+                        <a href="#">
+                            <div>
+                                <p>
+                                    <strong>Task 1</strong>
+                                    <span class="pull-right text-muted">40% Complete</span>
+                                </p>
+                                <div class="progress progress-striped active">
+                                    <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%">
+                                        <span class="sr-only">40% Complete (success)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <p>
+                                    <strong>Task 2</strong>
+                                    <span class="pull-right text-muted">20% Complete</span>
+                                </p>
+                                <div class="progress progress-striped active">
+                                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%">
+                                        <span class="sr-only">20% Complete</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a class="text-center" href="#">
+                            <strong>See All Tasks</strong>
+                            <i class="fa fa-angle-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-bell fa-fw"></i> <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-alerts">
+                    <li>
+                        <a href="#">
+                            <div>
+                                <i class="fa fa-comment fa-fw"></i> New Comment
+                                <span class="pull-right text-muted small">4 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <i class="fa fa-twitter fa-fw"></i> 3 New Followers
+                                <span class="pull-right text-muted small">12 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <i class="fa fa-envelope fa-fw"></i> Message Sent
+                                <span class="pull-right text-muted small">4 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <i class="fa fa-tasks fa-fw"></i> New Task
+                                <span class="pull-right text-muted small">4 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a href="#">
+                            <div>
+                                <i class="fa fa-upload fa-fw"></i> Server Rebooted
+                                <span class="pull-right text-muted small">4 minutes ago</span>
+                            </div>
+                        </a>
+                    </li>
+                    <li class="divider"></li>
+                    <li>
+                        <a class="text-center" href="#">
+                            <strong>See All Alerts</strong>
+                            <i class="fa fa-angle-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-user">
+                    <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
+                    </li>
+                    <li><a href="#"><i class="fa fa-gear fa-fw"></i> Settings</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+
+<!-- 左侧导航栏框架 -->
+<div th:fragment="sidebar" class="page-sidebar-wrapper">
+    <div class="page-sidebar navbar-collapse collapse">
+        <ul class="page-sidebar-menu  page-header-fixed "
+            data-keep-expanded="false" data-auto-scroll="true"
+            data-slide-speed="200" style="padding-top: 20px">
+            <!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
+            <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
+            <li class="sidebar-toggler-wrapper hide">
+                <div class="sidebar-toggler">
+                    <span></span>
+                </div>
+            </li>
+            <!-- END SIDEBAR TOGGLER BUTTON -->
+            <li class="nav-item ">
+                <a href="javascript:;" class="nav-link nav-toggle">
+                    <i class="fa fa-home"></i> <span class="title">--月度分析</span> <span
+                        class="arrow"></span>
+                </a>
+                <ul class="sub-menu">
+                    <li class="nav-item ">
+                        <a href="monthly_vessel_analysis.html" class="nav-link ">
+                            <span class="title">月度船舶分析</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a href="monthly_shift_analysis.html" class="nav-link ">
+                            <span class="title">月度工班分析</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item ">
+                <a href="javascript:;" class="nav-link nav-toggle">
+                    <i class="fa fa-bar-chart"></i> <span class="title">船舶分析</span>
+                    <span class="arrow"></span>
+                </a>
+                <ul class="sub-menu">
+                    <li class="nav-item ">
+                        <a href="vessel_QCefficiency_analysis.html" class="nav-link ">
+                            <span class="title">船时效率分析</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a href="vessel_efficiency_table.html" class="nav-link ">
+                            <span class="title">船舶效率大表</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a href="vessel_efficiency_analysis.html" class="nav-link ">
+                            <span class="title">船舶效率分析</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a href="vessel_efficiency_analysis_scatter.html"
+                           class="nav-link ">
+                            <span class="title">船舶效率分析（散点图）</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a href="vessel_single_efficiency_analysis.html"
+                           class="nav-link ">
+                            <span class="title">--单船效率分析</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item ">
+                <a href="javascript:;" class="nav-link nav-toggle">
+                    <i class="fa fa-pie-chart"></i> <span class="title">岸边机械</span>
+                    <span class="arrow"></span>
+                </a>
+                <ul class="sub-menu">
+                    <li class="nav-item  ">
+                        <a href="qc_efficiency_table.html" class="nav-link ">
+                            <span class="title">岸桥效率大表</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a href="qc_efficiency_analysis.html" class="nav-link ">
+                            <span class="title">岸桥作业效率</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a href="vessel_qc_productivity.html" class="nav-link ">
+                            <span class="title">船时岸桥效率分析</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a href="qc_MTandPT_jobtime.html" class="nav-link ">
+                            <span class="title">主副小车作业时间</span>
+                        </a>
+                    </li>
+                    <li class="nav-item  ">
+                        <a href="qc_delay_table.html" class="nav-link ">
+                            <span class="title">岸桥延时（等待）大表</span>
+                        </a>
+                    </li>
+                    <li class="nav-item  ">
+                        <a href="qc_delay_analysis.html" class="nav-link ">
+                            <span class="title">岸桥延时（等待）分析</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item  ">
+                <a href="javascript:;" class="nav-link nav-toggle">
+                    <i class="fa fa-area-chart"></i> <span class="title">水平机械</span>
+                    <span class="arrow"></span>
+                </a>
+                <ul class="sub-menu">
+                    <li class="nav-item  ">
+                        <a href="agv_efficiency_table.html" class="nav-link ">
+                            <span class="title">AGV效率大表</span>
+                        </a>
+                    </li>
+                    <li class="nav-item  ">
+                        <a href="agv_efficiency_analysis.html" class="nav-link ">
+                            <span class="title">AGV效率OEE分析</span>
+                        </a>
+                    </li>
+                    <li class="nav-item  ">
+                        <a href="agv_efficiency_analysis_time.html" class="nav-link ">
+                            <span class="title">AGV效率分时分析</span>
+                        </a>
+                    </li>
+                    <li class="nav-item  ">
+                        <a href="agv_delay_table.html" class="nav-link ">
+                            <span class="title">AGV延时（等待）大表</span>
+                        </a>
+                    </li>
+                    <li class="nav-item  ">
+                        <a href="agv_delay_analysis.html" class="nav-link ">
+                            <span class="title">AGV延时（等待）分析</span>
+                        </a>
+                    </li>
+                    <li class="nav-item  ">
+                        <a href="agv_mobile_track_analysis.html" class="nav-link ">
+                            <span class="title">AGV移动轨迹分析</span>
+                        </a>
+                    </li>
+                    <li class="nav-item  ">
+                        <a href="truck_efficiency_table.html" class="nav-link ">
+                            <span class="title">内集卡大表统计</span>
+                        </a>
+                    </li>
+                    <li class="nav-item  ">
+                        <a href="truck_efficiency_analysis.html" class="nav-link ">
+                            <span class="title">内集卡效率分析</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item  ">
+                <a href="javascript:;" class="nav-link nav-toggle">
+                    <i class="fa fa-line-chart"></i> <span class="title">堆场机械</span>
+                    <span class="arrow"></span>
+                </a>
+                <ul class="sub-menu">
+                    <li class="nav-item  ">
+                        <a href="asc_efficiency_table.html" class="nav-link ">
+                            <span class="title">ASC效率大表</span>
+                        </a>
+                    </li>
+                    <li class="nav-item  ">
+                        <a href="asc_efficiency_analysis.html" class="nav-link ">
+                            <span class="title">ASC效率OEE分析</span>
+                        </a>
+                    </li>
+                    <li class="nav-item  ">
+                        <a href="asc_efficiency_analysis_time.html" class="nav-link ">
+                            <span class="title">ASC效率分时分析</span>
+                        </a>
+                    </li>
+                    <li class="nav-item  ">
+                        <a href="asc_delay_table.html" class="nav-link ">
+                            <span class="title">ASC延时（等待）大表</span>
+                        </a>
+                    </li>
+                    <li class="nav-item  ">
+                        <a href="asc_delay_analysis.html" class="nav-link ">
+                            <span class="title">ASC延时（等待）分析</span>
+                        </a>
+                    </li>
+                    <li class="nav-item  ">
+                        <a href="asc_mobile_track_analysis.html" class="nav-link ">
+                            <span class="title">ASC移动轨迹分析</span>
+                        </a>
+                    </li>
+                    <li class="nav-item  ">
+                        <a href="block_send_distribution.html" class="nav-link ">
+                            <span class="title">收发箱箱区分布</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </li>
+            <li class="nav-item ">
+                <a href="javascript:;" class="nav-link nav-toggle">
+                    <i class="fa fa-industry"></i> <span class="title">--陆侧作业</span>
+                    <span class="arrow"></span>
+                </a>
+                <ul class="sub-menu">
+                    <li class="nav-item ">
+                        <a href="out_truck_efficiency_table.html" class="nav-link ">
+                            <span class="title">外集卡大表统计</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a href="out_truck_efficiency_analysis.html" class="nav-link ">
+                            <span class="title">外集卡效率分析</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item ">
+                <a href="javascript:;" class="nav-link nav-toggle">
+                    <i class="fa fa-industry"></i> <span class="title">--单机设备</span>
+                    <span class="arrow"></span>
+                </a>
+                <ul class="sub-menu">
+                    <li class="nav-item ">
+                        <a href="device_repair.html" class="nav-link ">
+                            <span class="title">设备维修</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a href="device_maintain.html" class="nav-link ">
+                            <span class="title">设备保养</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item ">
+                <a href="javascript:;" class="nav-link nav-toggle">
+                    <i class="fa fa-image"></i> <span class="title">--BI分析</span> <span
+                        class="arrow"></span>
+                </a>
+                <ul class="sub-menu">
+                    <li class="nav-item ">
+                        <a href="bi_box_structure_efficiency.html" class="nav-link ">
+                            <span class="title">箱型结构效率回归分析</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a href="bi_mechanical_work_time_equation.html"
+                           class="nav-link ">
+                            <span class="title">机械作业时间方程聚类分析</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item  ">
+                <a href="javascript:;" class="nav-link nav-toggle">
+                    <i class="icon-settings"></i> <span class="title">--系统配置</span>
+                    <span class="arrow"></span>
+                </a>
+                <ul class="sub-menu">
+                    <li class="nav-item  ">
+                        <a href="system_user_profile.html" class="nav-link ">
+                            <i class="icon-user  "></i> <span class="title">我的信息</span>
+                        </a>
+                    </li>
+                    <li class="nav-item  ">
+                        <a href="system_user_password.html" class="nav-link ">
+                            <i class="icon-key"></i> <span class="title">修改密码</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- Js脚本框架 -->
+<script th:fragment="script" type="text/javascript">
+    var activeLink = function() {
+        var url = location.pathname;
+        var menu = $('.page-sidebar-menu');
+        var el = null;
+        menu.find('li > a').each(function() {
+            var path = $(this).attr('href');
+            if (path) {
+                path = path.toLowerCase();
+                if (url.substr(-1 * path.length) == path) {
+                    el = $(this);
+                    return;
+                }
+            }
+        });
+        if (el) {
+            el.parents('li').each(
+                function() {
+                    $(this).addClass('active');
+                    $(this).find('> a > span.arrow').addClass('open');
+                    $(this).find('> a').append(
+                        '<span class="selected"></span>');
+                    $(this).addClass('open');
+                });
+        }
+    };
+    activeLink();
+</script>
 
 </body>
 </html>

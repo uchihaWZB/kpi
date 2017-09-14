@@ -40,8 +40,14 @@ public interface STS_SHIPTCGDao {
             +   "QC_COMMANDS T1,"
             +   "QC_WORK_QUEUE_STATUS T2\n"
             +"WHERE\n"
-            +   "T1.work_queue = T2.work_queue AND T2.vessel_visit = #{vesselVisit}")
-    double getProductivityByVessleVisit(@Param("vesselVisit") String vesselVisit);
+            +   "T1.work_queue = T2.work_queue\n"
+            +"AND\n"
+            +   "TO_CHAR(T1.created, 'yyyy-mm-dd hh24') >= #{startTime} and TO_CHAR(T1.created, 'yyyy-mm-dd hh24') <= #{endTime}\n"
+            +"AND\n"
+            +   "T2.vessel_visit = #{vesselVisit}")
+    Double getProductivityByVessleVisit(@Param("vesselVisit") String vesselVisit,
+                                        @Param("startTime") String startTime,
+                                        @Param("endTime") String endTime);
 
     /**
      * 根据船到访名查询该船次下的岸桥作业效率

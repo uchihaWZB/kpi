@@ -86,4 +86,17 @@ public class LoginController {
 
         return "login";
     }
+
+    @RequestMapping(value = "/system_user_profile", method = RequestMethod.GET)
+    public String userInfo(Model model) {
+
+        model.addAttribute("title","用户界面");
+        return "system-configs/system_user_profile";
+    }
+
+    @RequestMapping(value = "/frame", method = RequestMethod.GET)
+    public String frame(Model model) {
+        model.addAttribute("title","框架");
+        return "base/frame";
+    }
 }

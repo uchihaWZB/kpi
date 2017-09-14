@@ -38,7 +38,7 @@ public interface QcEfficiencyAnalysisService {
      *
      * @return
      */
-    List<Map<String, Object>> getAllVesselProductivity();
+    List<Map<String, Object>> getAllVesselProductivity(@Param("startTime") String startTime, @Param("endTime") String endTime);
 
     /**
      * 根据船到访名查询该船次下的岸桥作业效率
@@ -47,4 +47,12 @@ public interface QcEfficiencyAnalysisService {
      * @return
      */
     List<QcProductivityOfVesselVO> getAllQcProductivityByVesselName(@Param("vesselName") String vesselName);
+
+    /**
+     * 根据qcId查询该岸桥下的任务层面事件类型及其耗时
+     *
+     * @param qcId
+     * @return
+     */
+    Map<String, Object> getQcTaskEventConsumeByQcId(@Param("qcId") String qcId);
 }

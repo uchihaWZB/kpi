@@ -437,6 +437,11 @@
 									<i class="icon-key"></i> <span class="title">修改密码</span>
 								</a>
 							</li>
+							<li class="nav-item  ">
+								<a href="frame.html" class="nav-link ">
+									<i class="icon-home"></i> <span class="title">框架</span>
+								</a>
+							</li>
 						</ul>
 					</li>
 				</ul>
@@ -586,6 +591,9 @@
 <script th:src="@{/plugins/echarts3/theme/walden.js}"
 		src="../../static/plugins/echarts3/theme/walden.js"
 		type="text/javascript"></script>
+<script th:src="@{/plugins/echarts3/theme/infographic.js}"
+		src="../../static/plugins/echarts3/theme/infographic.js"
+		type="text/javascript"></script>
 <script
 		th:src="@{/plugins/bootstrap-daterangepicker/daterangepicker.min.js}"
 		src="../../static/plugins/bootstrap-daterangepicker/daterangepicker.min.js"
@@ -658,14 +666,14 @@
     activeLink();
 </script>
 <script type="text/javascript">
-    var activeForm = function() {
+    /*var activeForm = function() {
         var url = location.pathname;
         var action = url.replace("/", "").replace(".html", "");
         console.log("action = " + action)
         var query = "query_" + action;
         $('form').attr('action', query);
     };
-    activeForm();
+    activeForm();*/
 </script>
 <script type="text/javascript" layout:fragment="script">
 
