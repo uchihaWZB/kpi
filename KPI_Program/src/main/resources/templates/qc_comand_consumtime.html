@@ -352,8 +352,6 @@
 
         // 使用刚指定的配置项和数据显示图表。
         myChart1.setOption(option1);
-
-
     }
 
     //获取指令作业时间数据
@@ -399,9 +397,7 @@
 
         // 基于准备好的dom，初始化echarts实例
         var myChart1 = echarts.init(document.getElementById('main2'), 'walden');
-
         var params = [];
-
         for(var i in consumName){
 
             params[i] = {value:jobTime[i], name:consumName[i]}
@@ -459,10 +455,7 @@
 
         // 使用刚指定的配置项和数据显示图表。
         myChart1.setOption(option1);
-
-
     }
 </script>
-
 </body>
 </html>
