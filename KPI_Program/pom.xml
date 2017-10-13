@@ -7,6 +7,7 @@
 	<artifactId>demo</artifactId>
 	<version>11</version>
 	<packaging>jar</packaging>
+	<!--<packaging>war</packaging>-->
 
 	<name>KPI</name>
 	<description>ZPMC关键绩效指标系统</description>
@@ -43,7 +44,23 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<!-- 移除嵌入式tomcat START -->
+			<!--<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-tomcat</artifactId>
+				</exclusion>
+			</exclusions>-->
+			<!-- 移除嵌入式tomcat END -->
 		</dependency>
+
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-servlet-api</artifactId>
+			<version>8.0.36</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jdbc</artifactId>
