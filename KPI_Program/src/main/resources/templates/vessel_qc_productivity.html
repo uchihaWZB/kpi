@@ -30,6 +30,7 @@
                                             <div class="form-group col-md-12">
                                                 <div class="input-group" id="queryDate">
                                                     <input type="text" class="form-control" name="vesselDate" placeholder="作业日期" />
+                                                    <input type="hidden" id="timeTemp" name="timeTemp" />
                                                     <span class="input-group-btn">
                                                                 <button class="btn default date-range-toggle" type="button">
                                                                     <i class="fa fa-calendar"></i>
@@ -80,32 +81,45 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-md-12" style="height: 400px">
+                    <div class="col-md-4">
                         <div class="portlet light">
-                            <div id="qcTaskEvent" style="height: 600px;">
+                            <div id="qcTaskEventGap" style="height: 450px;"></div>
+                        </div>
+                    </div>
 
-                            </div>
+                    <div class="col-md-4">
+                        <div class="portlet light">
+                            <div id="qcTaskEvent" style="height: 450px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="portlet light">
+                            <div id="qcTaskEventCost" style="height: 450px;"></div>
                         </div>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="portlet light">
-                            <div id="qcTaskEventGap" style="height: 600px;">
-
-                            </div>
+                            <div id="qcInstrctionCost" style="height: 450px;"></div>
                         </div>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="portlet light">
-                            <div id="qcTaskEventCost" style="height: 600px;">
+                            <div id="qcInstrction" style="height: 450px;"></div>
+                        </div>
+                    </div>
 
-                            </div>
+                    <div class="col-md-4">
+                        <div class="portlet light">
+                            <div id="qcInstrctionGap" style="height: 450px;"></div>
                         </div>
                     </div>
                 </div>
+
             </div>
 
         </div>
@@ -118,23 +132,36 @@
 <script type="text/javascript" layout:fragment="script" th:inline="javascript">
 
     // 全局变量
-    var vesselQcProData = [[${vesselQcProductivitys}]];                                             // 获取船时岸桥工作效率信息
+    var vesselQcProData = [[${vesselQcProductivitys}]];                                                 // 获取船时岸桥工作效率信息
 
-    var VesselQcProEchart = echarts.init(document.getElementById('vesselQcPro'), 'vintage');        // 初始化 船时作业效率Echart图
+    // 初始化 船时作业效率Echart图
+    var VesselQcProEchart = echarts.init(document.getElementById('vesselQcPro'), 'vintage');
 
-    var QcProsOfVesselEchart = echarts.init(document.getElementById('qcOfVesselData'), 'vintage');  // 初始化 船时作业下岸桥效率Echart图
+    // 初始化 船时作业下岸桥效率Echart图
+    var QcProsOfVesselEchart = echarts.init(document.getElementById('qcOfVesselData'), 'vintage');
 
-    var QcTaskEventEchart = echarts.init(document.getElementById('qcTaskEvent'), 'vintage');        // 初始化 岸桥下每个主小车任务信息Echart图
+    // 初始化 岸桥下每个主小车任务信息Echart图
+    var QcTaskEventEchart = echarts.init(document.getElementById('qcTaskEvent'), 'vintage');
 
-    var TaskEventGapEchart = echarts.init(document.getElementById('qcTaskEventGap'), 'infographic');  // 初始化 岸桥-主小车-任务间隔耗时Echart图
+    // 初始化 岸桥-主小车-任务间隔耗时Echart图
+    var TaskEventGapEchart = echarts.init(document.getElementById('qcTaskEventGap'), 'infographic');
 
-    var TaskEventCostEchart = echarts.init(document.getElementById('qcTaskEventCost'), 'macarons');  // 初始化 岸桥-主小车-任务耗时Echart图
+    // 初始化 岸桥-主小车-任务耗时Echart图
+    var TaskEventCostEchart = echarts.init(document.getElementById('qcTaskEventCost'), 'macarons');
+
+    // 初始化 岸桥-主小车-指令耗时与间隔
+    var QcInstrctionEchart = echarts.init(document.getElementById('qcInstrction'), 'vintage');
+
+    // 初始化 岸桥-主小车-指令类型及其耗时
+    var InstrctionCostEchart = echarts.init(document.getElementById('qcInstrctionCost'), 'vintage');
+
+    // 初始化 岸桥-主小车-指令间隔类型及其耗时
+    var InstrctionGapEchart = echarts.init(document.getElementById('qcInstrctionGap'), 'vintage');
 
     $(function() {
         $('input[name=vesselDate]').daterangepicker({
             timePicker : true,          // 显示时间
             timePicker24Hour : true,    // 24小时制
-            startDate : '1999-01-01',
             endDate : new Date(),
             locale : {
                 format : 'YYYY-MM-DD HH',
@@ -151,6 +178,8 @@
     // 根据时间查询船时效率
     $("#searchBtn").click(function () {
         var params = $("#vesselQcForm").serialize();
+        var timeTemp = $('input[name=vesselDate]').val();
+        $("#timeTemp").val(timeTemp);
 
         $.ajax({
             url : 'vessel_qc_productivity/queryByTime',
@@ -287,17 +316,19 @@
     function initVesselQcProEchart(vesselQcData) {
 
         var vesselQcOption = getVesselQcProEchartOptions(vesselQcProData);
-
         VesselQcProEchart.setOption(vesselQcOption);
 
         VesselQcProEchart.on('click', function(param) {
+//            jConfirm('确定查询船次 '+ param.name +' 下的岸桥作业效率？', "提示！", function(opt) {
+//                if (opt) {
 
-            jConfirm('确定查询船次 '+ param.name +' 下的岸桥作业效率？', "提示！", function(opt) {
-                if (opt) {
+                    // 获取当前特定时间
+                    var vesselDate = $("#timeTemp").val();
                     var option = {
                         url : 'vessel_qc_productivity/qcProOfVessel',
                         type : 'GET',
-                        data : {'vesselName' : param.name},
+                        data : {'vesselName' : param.name,
+                                'vesselDate' : vesselDate},
                         success : function (data) {
                             var result = data.result;
                             var currentOptions = getQcProOfVesselEchartOptions(result, param.name);
@@ -307,10 +338,10 @@
                     };
                     $.ajax(option);
 
-                } else {
-                    return;
-                }
-            });
+//                } else {
+//                    return;
+//                }
+//            });
         });
     }
 
@@ -319,12 +350,15 @@
      *
      */
     QcProsOfVesselEchart.on('click', function (param) {
-        jConfirm('确定查询岸桥编号： '+ param.name +' 的具体作业情况？', "提示！", function(opt) {
-            if (opt) {
+//        jConfirm('确定查询岸桥编号： '+ param.name +' 的具体作业情况？', "提示！", function(opt) {
+//            if (opt) {
+                // 获取当前特定时间
+                var vesselDate = $("#timeTemp").val();
                 var option = {
                     url : 'vessel_qc_productivity/qcTaskEventConsume',
                     type : 'GET',
-                    data : {'qcId' : param.name},
+                    data : {'qcId' : param.name,
+                            'vesselDate' : vesselDate},
                     success : function (data) {
                         var result = data;
                         var qcTaskEventOption = getQcTaskEventEchartOptions(result, param.name);
@@ -334,12 +368,11 @@
                         QcTaskEventEchart.setOption(qcTaskEventOption);
                         TaskEventCostEchart.setOption(taskCostOption);
                         TaskEventGapEchart.setOption(taskGapOption);
-
                     }
                 };
                 $.ajax(option);
-            }
-        });
+//            }
+//        });
     });
 
     /**
@@ -440,13 +473,14 @@
                 formatter : "{a} <br/>{b} : {c}s ({d}%)",
             },
             legend : {
-                orient : 'horizontal',
+                orient : 'vertical',
                 x : 'left',
                 top : '7%',
                 data : legendData
             },
             toolbox : {
                 show : true,
+                top : "10%",
                 feature : {
                     mark : {show : true},
                     dataView : {show: true, readOnly: false},
@@ -457,8 +491,8 @@
             series : {
                     name : '主小车时间段内作业任务效率分析',
                     type : 'pie',
-                    radius : [30, 110],
-                    center : ['50%', '40%'],
+                    radius : [30, 90],
+                    center : ['50%', '60%'],
                     data : [
                         {value : totalTaskCost, name : '任务时间'},
                         {value : totalTaskGap, name : '任务间隔'}
@@ -497,13 +531,14 @@
                 formatter : "{a} <br/>{b} : {c}s ({d}%)",
             },
             legend : {
-                orient : 'horizontal',
+                orient : 'vertical',
                 x : 'left',
                 top : '7%',
                 data : legendData
             },
             toolbox : {
                 show : true,
+                top : '10%',
                 feature : {
                     mark : {show : true},
                     dataView : {show: true, readOnly: false},
@@ -514,7 +549,8 @@
             series : {
                     name : '主小车时间段内作业任务效率分析',
                     type : 'pie',
-                    radius : [20, 110],
+                    radius : [20, 90],
+                    center : ['50%', '60%'],
                     avoidLabelOverlap : true,
                     data : costSeriesData,
             },
@@ -551,13 +587,14 @@
                 formatter : "{a} <br/>{b} : {c}s ({d}%)",
             },
             legend : {
-                orient : 'horizontal',
+                orient : 'vertical',
                 x : 'left',
                 top : '7%',
                 data : legendData
             },
             toolbox : {
                 show : true,
+                top : '10%',
                 feature : {
                     mark : {show : true},
                     dataView : {show: true, readOnly: false},
@@ -568,7 +605,8 @@
             series : {
                 name : '主小车时间段内作业任务间隔耗时分析',
                 type : 'pie',
-                radius : [20, 110],
+                radius : [20, 90],
+                center : ['50%', '60%'],
                 avoidLabelOverlap : true,
                 data : gapSeriesData,
             },

@@ -121,6 +121,13 @@ public class VesselQcProductivityController {
         return rm;
     }
 
+    /**
+     * 根据qc_id 获取特定岸桥下的作业信息
+     *
+     * @param request
+     * @param response
+     * @return
+     */
     @RequestMapping(value = "/qcTaskEventConsume", method = RequestMethod.GET)
     @ResponseBody
     public Map<String, Object> getTaskEventConsumeByQcId(HttpServletRequest request, HttpServletResponse response) {

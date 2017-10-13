@@ -22,7 +22,7 @@ public interface EventResultDao {
     List<EventResultPO> getAllEventResultPO();
 
     /**
-     * 根据岸桥id获取 岸桥任务总耗时
+     * 根据岸桥id获取 岸桥任务 总耗时
      *
      * @param qcId
      * @return
@@ -33,7 +33,7 @@ public interface EventResultDao {
     Double getQcCostTimeByQcId(@Param("qcId") String qcId);
 
     /**
-     * 根据岸桥id获取 岸桥任务间隔总耗时
+     * 根据岸桥id获取 岸桥任务间隔 总耗时
      *
      * @param qcId
      * @return

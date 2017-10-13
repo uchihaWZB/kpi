@@ -32,7 +32,7 @@ public class LoginController {
     @Qualifier("UserService")
     private UserService userService;
 
-    @RequestMapping(value = "/login")
+    @RequestMapping(value = "/")
     public String homePage(){
 
         return "login";
