@@ -27,9 +27,9 @@ public interface EventResultDao {
      * @param qcId
      * @return
      */
-    @Select("SELECT SUM(eventgaptime) as cost\n"
-            +"FROM T_STS_EVENT_RESULT\n"
-            +"WHERE QCID = #{qcId} AND gapid LIKE '%COST%'")
+    @Select("SELECT SUM(EVENT_GAP) as cost\n"
+            +"FROM T_STS_CONVERT_EVENT_RECORD\n"
+            +"WHERE STS_ID = #{qcId} AND GAP_ID LIKE '%COST%'")
     Double getQcCostTimeByQcId(@Param("qcId") String qcId);
 
     /**
@@ -38,9 +38,9 @@ public interface EventResultDao {
      * @param qcId
      * @return
      */
-    @Select("SELECT SUM(eventgaptime) as gap\n"
-            +"FROM T_STS_EVENT_RESULT\n"
-            +"WHERE QCID = #{qcId} AND gapid LIKE '%GAP%'")
+    @Select("SELECT SUM(EVENT_GAP) as gap\n"
+            +"FROM T_STS_CONVERT_EVENT_RECORD\n"
+            +"WHERE STS_ID = #{qcId} AND GAP_ID LIKE '%GAP%'")
     Double getQcGapTimeByQcId(@Param("qcId") String qcId);
 
     /**
@@ -50,13 +50,13 @@ public interface EventResultDao {
      * @return
      */
     @Select("SELECT "
-            +    "gapid, gaptype, eventdesc, sum(eventgaptime) as eventconsume\n"
+            +    "GAP_ID, GAP_TYPE, EVENT_DESC, sum(EVENT_GAP) as eventconsume\n"
             +"FROM\n"
-            +   "T_STS_EVENT_RESULT\n"
+            +   "T_STS_CONVERT_EVENT_RECORD\n"
             +"WHERE\n"
-            +   "QCID = #{qcId} AND gapid LIKE '%GAP%'\n"
+            +   "STS_ID = #{qcId} AND GAP_ID LIKE '%GAP%'\n"
             +"GROUP BY\n"
-            +   "gapid, gaptype, eventdesc")
+            +   "GAP_ID, GAP_TYPE, EVENT_DESC")
     List<QcTaskInfoVO> getTaskEventGAPConsumeByQcId(@Param("qcId") String qcId);
 
     /**
@@ -66,12 +66,12 @@ public interface EventResultDao {
      * @return
      */
     @Select("SELECT "
-            +    "gapid, gaptype, eventdesc, sum(eventgaptime) as eventconsume\n"
+            +    "GAP_ID, GAP_TYPE, EVENT_DESC, sum(EVENT_GAP) as eventconsume\n"
             +"FROM\n"
-            +   "T_STS_EVENT_RESULT\n"
+            +   "T_STS_CONVERT_EVENT_RECORD\n"
             +"WHERE\n"
-            +   "QCID = #{qcId} AND gapid LIKE '%COST%'\n"
+            +   "STS_ID = #{qcId} AND GAP_ID LIKE '%COST%'\n"
             +"GROUP BY\n"
-            +   "gapid, gaptype, eventdesc")
+            +   "GAP_ID, GAP_TYPE, EVENT_DESC")
     List<QcTaskInfoVO> getTaskEventCOSTConsumeByQcId(@Param("qcId") String qcId);
 }

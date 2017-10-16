@@ -159,38 +159,38 @@ public class VesselQcProductivityController {
         Double normalTaskConsume = 0d;
 
         for (QcTaskInfoVO vo : listTaskGap) {
-            if (Constant.WAIT_WORK_QUEUE_TYPE.contains(vo.getGapId())) {
+            if (Constant.WAIT_WORK_QUEUE_TYPE.contains(vo.getGap_Id())) {
 
                 workQueueConsume += vo.getEventConsume();
-            } else if (Constant.WAIT_WI_CI_TYPE.contains(vo.getGapId())) {
+            } else if (Constant.WAIT_WI_CI_TYPE.contains(vo.getGap_Id())) {
 
                 wiciConsume += vo.getEventConsume();
-            } else if (Constant.WAIT_OCR_TYPE.contains(vo.getGapId())) {
+            } else if (Constant.WAIT_OCR_TYPE.contains(vo.getGap_Id())) {
 
                 ocrConsume += vo.getEventConsume();
-            } else if (Constant.WAIT_PF_LOCK_TYPE.contains(vo.getGapId())) {
+            } else if (Constant.WAIT_PF_LOCK_TYPE.contains(vo.getGap_Id())) {
 
                 pfLockConsume += vo.getEventConsume();
-            } else if (Constant.WAIT_STSMS_REBOOT_TYPE.contains(vo.getGapId())) {
+            } else if (Constant.WAIT_STSMS_REBOOT_TYPE.contains(vo.getGap_Id())) {
 
                 stsRebootConsume += vo.getEventConsume();
-            } else if (Constant.MT_MANUAL_MODE_TYPE.contains(vo.getGapId())) {
+            } else if (Constant.MT_MANUAL_MODE_TYPE.contains(vo.getGap_Id())) {
 
                 mtManualConsume += vo.getEventConsume();
-            } else if (Constant.WAIT_STSMS_PERFORMANCE_TYPE.contains(vo.getGapId())) {
+            } else if (Constant.WAIT_STSMS_PERFORMANCE_TYPE.contains(vo.getGap_Id())) {
 
                 stsPerformanceConsume += vo.getEventConsume();
             }
         }
 
         for (QcTaskInfoVO vo : listTaskCost) {
-            if (Constant.CHANGE_BAY_COST_TYPE.contains(vo.getGapId())) {
+            if (Constant.CHANGE_BAY_COST_TYPE.contains(vo.getGap_Id())) {
 
                 changeBayConsume += vo.getEventConsume();
-            } else if (Constant.PARK_TASK_COST_TYPE.contains(vo.getGapId())) {
+            } else if (Constant.PARK_TASK_COST_TYPE.contains(vo.getGap_Id())) {
 
                 parkTaskConsume += vo.getEventConsume();
-            } else if (Constant.NORMAL_TASK_COST_TYPE.contains(vo.getGapId())) {
+            } else if (Constant.NORMAL_TASK_COST_TYPE.contains(vo.getGap_Id())) {
 
                 normalTaskConsume += vo.getEventConsume();
             }

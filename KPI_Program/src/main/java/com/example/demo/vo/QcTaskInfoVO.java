@@ -7,46 +7,46 @@ package com.example.demo.vo;
  */
 public class QcTaskInfoVO {
 
-    private String gapId;           // 耗时事件Id
+    private String gap_Id;           // 耗时事件Id
 
-    private String gapType;         // 耗时事件类型
+    private String gap_Type;         // 耗时事件类型
 
-    private String eventDesc;       // 耗时事件描述
+    private String event_Desc;       // 耗时事件描述
 
     private Double eventConsume;    // 耗时事件总耗时
 
     public QcTaskInfoVO() {
     }
 
-    public QcTaskInfoVO(String gapId, String gapType, String eventDesc, Double eventConsume) {
-        this.gapId = gapId;
-        this.gapType = gapType;
-        this.eventDesc = eventDesc;
+    public QcTaskInfoVO(String gap_Id, String gap_Type, String event_Desc, Double eventConsume) {
+        this.gap_Id = gap_Id;
+        this.gap_Type = gap_Type;
+        this.event_Desc = event_Desc;
         this.eventConsume = eventConsume;
     }
 
-    public String getGapId() {
-        return gapId;
+    public String getGap_Id() {
+        return gap_Id;
     }
 
-    public void setGapId(String gapId) {
-        this.gapId = gapId;
+    public void setGap_Id(String gap_Id) {
+        this.gap_Id = gap_Id;
     }
 
-    public String getGapType() {
-        return gapType;
+    public String getGap_Type() {
+        return gap_Type;
     }
 
-    public void setGapType(String gapType) {
-        this.gapType = gapType;
+    public void setGap_Type(String gap_Type) {
+        this.gap_Type = gap_Type;
     }
 
-    public String getEventDesc() {
-        return eventDesc;
+    public String getEvent_Desc() {
+        return event_Desc;
     }
 
-    public void setEventDesc(String eventDesc) {
-        this.eventDesc = eventDesc;
+    public void setEvent_Desc(String event_Desc) {
+        this.event_Desc = event_Desc;
     }
 
     public Double getEventConsume() {
