@@ -37,8 +37,11 @@ public class Qc_MTjobtimeController extends BaseAction {
     public @ResponseBody JsonResult getMTjobtimedata(String startDateTime,String endDateTime,String craneNum) {
 
         System.out.println("+++++++++++++++获取主副小车作业时间++++++++++++++++++++");
-        /*// 记录debug级别的信息
-        logger.debug("This is debug message.");
+
+        System.out.println(startDateTime+"  YY  "+endDateTime+"   TTT  "+craneNum);
+
+        // 记录debug级别的信息
+        /*logger.debug("This is debug message.");
         // 记录info级别的信息
         logger.info("This is info message.");
         // 记录warn级别的信息
@@ -50,7 +53,7 @@ public class Qc_MTjobtimeController extends BaseAction {
         List<JsonMTjobtime> jsonMTALjobtimeList = new LinkedList<JsonMTjobtime>();
         List<MTjobtime> MTjobtimeList = mTjobtimeService.getMTjobtimedata(startDateTime,endDateTime,craneNum);
 
-        System.out.println(startDateTime+"  YY  "+endDateTime+"   TTT  "+craneNum);
+
         if(!CollectionUtils.isEmpty(MTjobtimeList)){
 
             for (MTjobtime mTjobtime:MTjobtimeList){

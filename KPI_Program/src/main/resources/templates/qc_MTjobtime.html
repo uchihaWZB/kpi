@@ -125,7 +125,7 @@
         }
 
         var craneNum = $("#craneNum").val();
-        var param = {startDateTime:startDateTime,endDateTime:endDateTime,craneNum:craneNum};
+        var param = {"startDateTime":startDateTime,"endDateTime":endDateTime,"craneNum":craneNum};
 
         $.ajax({
             url: '/getMTjobtimedata',
@@ -134,8 +134,9 @@
             timeout: gAjaxTimeout,
             data: param,
             error: function(xhr, textStatus, thrownError){
-                var err = $.i18n.prop('errors.ajax', xhr.status, textStatus);
-                alert('err');
+                /*var err = $.i18n.prop('errors.ajax', xhr.status, textStatus);
+                alert('err');*/
+                alert(xhr.status + textStatus);
             },
             success: function(response) {
                 var res = eval('(' + response + ')');

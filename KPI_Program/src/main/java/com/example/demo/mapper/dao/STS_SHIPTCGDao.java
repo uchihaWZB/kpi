@@ -35,7 +35,8 @@ public interface STS_SHIPTCGDao {
      * @return
      */
     @Select("SELECT "
-            +   "COUNT(T1.work_queue) / FLOOR((MAX(T1.updated) - MIN(T1.created)) * 24) as vessel_qc_productivity\n"
+            //+   "COUNT(T1.work_queue) / FLOOR((MAX(T1.updated) - MIN(T1.created)) * 24) as vessel_qc_productivity\n"
+            +   " decode(FLOOR((MAX(T1.updated) - MIN(T1.created)) * 24),0,0,COUNT(T1.work_queue) / FLOOR((MAX(T1.updated) - MIN(T1.created)) * 24))  as vessel_qc_productivity\n"
             +"FROM\n"
             +   "QC_COMMANDS T1,"
             +   "QC_WORK_QUEUE_STATUS T2\n"
