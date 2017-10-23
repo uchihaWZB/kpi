@@ -78,13 +78,13 @@
                 <div class="row">
                     <div class="col-md-4">
                         <div class="portlet light">
-                            <div id="main1" style="height: 450px;"></div>
+                            <div id="main" style="height: 450px;"></div>
                         </div>
                     </div>
 
                     <div class="col-md-4">
                         <div class="portlet light">
-                            <div id="main" style="height: 450px;"></div>
+                            <div id="main1" style="height: 450px;"></div>
                         </div>
                     </div>
 
@@ -113,6 +113,8 @@
                 cancelLabel: '取消'
             }
         });
+
+        search();
 
         $("#searchBtn").bind("click",function () {
 
@@ -147,7 +149,7 @@
         var consumTotalList;
         var consumName = [];
         var consumTime = [];
-        var qcid;
+        var qcid = '--';
 
         $.ajax({
             url: '/consumTotalTimeAnalysis',
@@ -156,8 +158,8 @@
             timeout: gAjaxTimeout,
             data: param,
             error: function(xhr, textStatus, thrownError){
-                var err = $.i18n.prop('errors.ajax', xhr.status, textStatus);
-                alert(err);
+                //var err = $.i18n.prop('errors.ajax', xhr.status, textStatus);
+                alert(xhr.status + textStatus);
             },
             success: function(response) {
                 var res = eval('(' + response + ')');
@@ -166,13 +168,16 @@
                     if(res.data != null){
                         consumTotalList = res.data.consumTotalList;
 
-                        for(var i in consumTotalList){
+                        if(consumTotalList.length >0){
 
-                            consumName[i] = consumTotalList[i].consumName;
-                            consumTime[i] = consumTotalList[i].consumTime;
+                            for(var i in consumTotalList){
+
+                                consumName[i] = consumTotalList[i].consumName;
+                                consumTime[i] = consumTotalList[i].consumTime;
+                            }
+
+                            qcid = consumTotalList[0].qcid;
                         }
-
-                        qcid = consumTotalList[0].qcid;
                         reloadConSumChart(consumName,consumTime,qcid);
                     }
                 }
@@ -253,7 +258,7 @@
         var Ins_GapList;
         var consumName = [];
         var gapTime = [];
-        var qcId;
+        var qcId='--';
 
         $.ajax({
             url: '/insGapAnalysis',
@@ -262,8 +267,8 @@
             timeout: gAjaxTimeout,
             data: param,
             error: function(xhr, textStatus, thrownError){
-                var err = $.i18n.prop('errors.ajax', xhr.status, textStatus);
-                alert(err);
+                //var err = $.i18n.prop('errors.ajax', xhr.status, textStatus);
+                alert(xhr.status + textStatus);
             },
             success: function(response) {
                 var res = eval('(' + response + ')');
@@ -272,13 +277,17 @@
                     if(res.data != null){
                         Ins_GapList = res.data.Ins_GapList;
 
-                        for(var i in Ins_GapList){
+                        if(Ins_GapList.length >0){
 
-                            consumName[i] = Ins_GapList[i].consumName;
-                            gapTime[i] = Ins_GapList[i].gapTime;
+                            for(var i in Ins_GapList){
 
+                                consumName[i] = Ins_GapList[i].consumName;
+                                gapTime[i] = Ins_GapList[i].gapTime;
+
+                            }
+                            qcId = Ins_GapList[0].qcid;
                         }
-                        qcId = Ins_GapList[0].qcid;
+
                         reloadGapChart(consumName,gapTime,qcId);
                     }
                 }
@@ -360,7 +369,7 @@
         var Ins_GapList;
         var consumName = [];
         var jobTime = [];
-        var qcid;
+        var qcid = '--';
 
         $.ajax({
             url: '/InsTimeAnalysis',
@@ -369,8 +378,8 @@
             timeout: gAjaxTimeout,
             data: param,
             error: function(xhr, textStatus, thrownError){
-                var err = $.i18n.prop('errors.ajax', xhr.status, textStatus);
-                alert(err);
+                //var err = $.i18n.prop('errors.ajax', xhr.status, textStatus);
+                alert(xhr.status + textStatus);
             },
             success: function(response) {
                 var res = eval('(' + response + ')');
@@ -379,12 +388,17 @@
                     if(res.data != null){
                         Ins_TimeList = res.data.Ins_TimeList;
 
-                        for(var i in Ins_TimeList){
+                        if(Ins_TimeList.length >0){
 
-                            consumName[i] = Ins_TimeList[i].consumName;
-                            jobTime[i] = Ins_TimeList[i].jobTime;
+                            for(var i in Ins_TimeList){
+
+                                consumName[i] = Ins_TimeList[i].consumName;
+                                jobTime[i] = Ins_TimeList[i].jobTime;
+                            }
+                            qcid = Ins_TimeList[0].qcid;
                         }
-                        qcid = Ins_TimeList[0].qcid;
+
+
                         reloadInsTimeChart(consumName,jobTime,qcid);
                     }
                 }

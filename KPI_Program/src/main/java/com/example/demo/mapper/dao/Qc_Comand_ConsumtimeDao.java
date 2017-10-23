@@ -168,7 +168,7 @@ public interface Qc_Comand_ConsumtimeDao {
             "group by \n" +
             "  qcid ")*/
 
-    @Select("select \n" +
+    /*@Select("select \n" +
             "  1 as consumType，\n" +
             "  '等待目标位置' as consumName，\n" +
             "  STS_ID as qcid,\n" +
@@ -232,7 +232,92 @@ public interface Qc_Comand_ConsumtimeDao {
             "  'GAP139','GAP140','GAP141','GAP148','GAP149','GAP150','GAP151',\n" +
             "  'GAP154','GAP155','GAP156','GAP157','GAP158')   \n" +
             "group by \n" +
-            "  STS_ID ")
+            "  STS_ID ")*/
+    @Select( "            select \n" +
+            "              1 as consumType，\n" +
+            "              '等待目标位置' as consumName，\n" +
+            "              STS_ID as qcid,\n" +
+            "              sum(EVENT_GAP) as gapTime\n" +
+            "            from \n" +
+            "              T_STS_CONVERT_EVENT_RECORD\n" +
+            "            where\n" +
+            "              1=1\n" +
+            "              and to_char(CURRENT_EVENT_CREATED,'YYYY-MM-DD hh24:mi:ss') > #{startDateTime}\n" +
+            "              and to_char(CURRENT_EVENT_CREATED,'YYYY-MM-DD hh24:mi:ss') < #{endDateTime}\n" +
+            "              and STS_ID = #{craneNum} \n" +
+            "              and event_level = 'Level03' \n" +
+            "              and gap_type ='WAITTOPOSITION'  \n" +
+            "            group by \n" +
+            "              STS_ID\n" +
+            "            union all\n" +
+            "            select \n" +
+            "              2 as consumType，\n" +
+            "              '等待门架避让' as consumName，\n" +
+            "              STS_ID as qcid,\n" +
+            "              sum(EVENT_GAP) as gapTime\n" +
+            "            from \n" +
+            "              T_STS_CONVERT_EVENT_RECORD\n" +
+            "            where\n" +
+            "              1=1\n" +
+            "              and to_char(CURRENT_EVENT_CREATED,'YYYY-MM-DD hh24:mi:ss') > #{startDateTime}\n" +
+            "              and to_char(CURRENT_EVENT_CREATED,'YYYY-MM-DD hh24:mi:ss') < #{endDateTime}\n" +
+            "              and STS_ID = #{craneNum} \n" +
+            "              and event_level = 'Level03' \n" +
+            "              and gap_type ='WAITPT'   \n" +
+            "            group by \n" +
+            "              STS_ID\n" +
+            "            union all\n" +
+            "            select \n" +
+            "              3 as consumType，\n" +
+            "              '等待异常处理' as consumName，\n" +
+            "              STS_ID as qcid,\n" +
+            "              sum(EVENT_GAP) as gapTime\n" +
+            "            from \n" +
+            "              T_STS_CONVERT_EVENT_RECORD\n" +
+            "            where\n" +
+            "              1=1\n" +
+            "              and to_char(CURRENT_EVENT_CREATED,'YYYY-MM-DD hh24:mi:ss') > #{startDateTime}\n" +
+            "              and to_char(CURRENT_EVENT_CREATED,'YYYY-MM-DD hh24:mi:ss') < #{endDateTime}\n" +
+            "              and STS_ID = #{craneNum} \n" +
+            "              and event_level = 'Level03' \n" +
+            "              and gap_type ='EXCEPTIONHANDLE'   \n" +
+            "            group by \n" +
+            "              STS_ID\n" +
+            "            union all\n" +
+            "            \n" +
+            "            select \n" +
+            "              4 as consumType，\n" +
+            "              '其他因素耗时' as consumName，\n" +
+            "              STS_ID as qcid,\n" +
+            "              sum(EVENT_GAP) as gapTime\n" +
+            "            from \n" +
+            "              T_STS_CONVERT_EVENT_RECORD\n" +
+            "            where\n" +
+            "              1=1\n" +
+            "              and to_char(CURRENT_EVENT_CREATED,'YYYY-MM-DD hh24:mi:ss') > #{startDateTime}\n" +
+            "              and to_char(CURRENT_EVENT_CREATED,'YYYY-MM-DD hh24:mi:ss') < #{endDateTime}\n" +
+            "              and STS_ID = #{craneNum} \n" +
+            "              and event_level = 'Level03' \n" +
+            "              and gap_type ='INSOTHERFACTOR'   \n" +
+            "            group by \n" +
+            "              STS_ID \n" +
+            "            union all\n" +
+            "            select \n" +
+            "              5 as consumType，\n" +
+            "              '指令执行耗时' as consumName，\n" +
+            "              STS_ID as qcid,\n" +
+            "              sum(EVENT_GAP) as gapTime\n" +
+            "            from \n" +
+            "              T_STS_CONVERT_EVENT_RECORD\n" +
+            "            where\n" +
+            "              1=1\n" +
+            "              and to_char(CURRENT_EVENT_CREATED,'YYYY-MM-DD hh24:mi:ss') > #{startDateTime}\n" +
+            "              and to_char(CURRENT_EVENT_CREATED,'YYYY-MM-DD hh24:mi:ss') < #{endDateTime}\n" +
+            "              and STS_ID = #{craneNum} \n" +
+            "              and event_level = 'Level03' \n" +
+            "              and gap_type ='INSTRUCTIONCOST'  \n" +
+            "            group by \n" +
+            "              STS_ID  ")
     public List<Ins_GapAnalysisVO> getIns_GapData(@Param("startDateTime") String startDateTime, @Param("endDateTime") String endDateTime,
                                                   @Param("craneNum") String craneNum);
 

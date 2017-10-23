@@ -19,18 +19,18 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/")
-public class Qc_MTjobtimeController extends BaseAction {
+public class qc_mtjobtimeController extends BaseAction {
 
-    private static Logger logger = Logger.getLogger(Qc_MTjobtimeController.class);
+    private static Logger logger = Logger.getLogger(qc_mtjobtimeController.class);
 
     @Autowired
     private MTjobtimeService mTjobtimeService;
 
-    @RequestMapping(value = "qc_MTjobtime",method = RequestMethod.GET)
-    public String qc_MTjobtime() {
+    @RequestMapping(value = "qc_mtjobtime",method = RequestMethod.GET)
+    public String qc_mtjobtime() {
 
         System.out.println("+++++++++++++++主副小车作业时间++++++++++++++++++++");
-        return "qc_MTjobtime";
+        return "qc_mtjobtime";
     }
 
     @RequestMapping(value = "getMTjobtimedata",method = RequestMethod.GET)
