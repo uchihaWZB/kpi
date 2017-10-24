@@ -64,7 +64,7 @@
                         <div class="portlet light">
                             <div id="vesselQcPro" style="height: 600px;">
 
-                                <!-- 用以展示岸桥效率图表 -->
+                                <!-- 用以展示 不同船名的效率 -->
                             </div>
                         </div>
                     </div>
@@ -75,18 +75,13 @@
                         <div class="portlet light">
                             <div id="qcOfVesselData" style="height: 600px;">
 
+                                <!-- 用以展示 船名下的岸桥效率 -->
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-4">
-                        <div class="portlet light">
-                            <div id="qcTaskEventGap" style="height: 450px;"></div>
-                        </div>
-                    </div>
-
                     <div class="col-md-4">
                         <div class="portlet light">
                             <div id="qcTaskEvent" style="height: 450px;"></div>
@@ -96,6 +91,12 @@
                     <div class="col-md-4">
                         <div class="portlet light">
                             <div id="qcTaskEventCost" style="height: 450px;"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="portlet light">
+                            <div id="qcTaskEventGap" style="height: 450px;"></div>
                         </div>
                     </div>
                 </div>
@@ -278,7 +279,7 @@
                 name : '船时效率',
                 type : 'bar',
                 data : vesselPros,
-                barMaxWidth : '20%',
+                barMaxWidth : '10%',
                 barGap : '10%',
                 clickable : true,
                 itemStyle : {
@@ -424,6 +425,8 @@
                 name : '分时效率',
                 type : 'bar',
                 data : productivity,
+                barMaxWidth : 50,
+                barGap : '10%',
                 itemStyle: {
                     normal: {
                         color: function(params) {

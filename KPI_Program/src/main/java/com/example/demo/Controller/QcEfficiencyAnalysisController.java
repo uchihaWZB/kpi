@@ -6,12 +6,14 @@ import com.example.demo.model.QC_CommandPO;
 import com.example.demo.model.enums.QC_CommandColumns;
 import com.example.demo.service.QcEfficiencyAnalysisService;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.example.demo.utils.SystemUtils;
 import com.example.demo.utils.returnMessage.ReturnMsg;
 import com.example.demo.vo.QcJobEfficiencyVO;
 import com.sun.javafx.collections.MappingChange;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,8 +39,8 @@ public class QcEfficiencyAnalysisController extends BaseAction{
     @Autowired
     private QcEfficiencyAnalysisService qcEfficiencyAnalysisService;
 
-    private String startTime = "0000-00-00 00";         // 预设查询开始时间
-    private String endTime = "9999-99-99 99";           // 预设查询结束时间
+    private String startTime = DateFormatUtils.format(new Date(), "yyyy-MM-dd 00:00:00");         // 预设查询开始时间
+    private String endTime = DateFormatUtils.format(new Date(), "yyyy-MM-dd HH:mm:ss");           // 预设查询结束时间
 
     /**
      * 初始化岸桥分时效率统计
@@ -81,9 +83,6 @@ public class QcEfficiencyAnalysisController extends BaseAction{
 
         String qcEfficiencyType = request.getParameter("queryBoxOrCycle");
         String jobDate = request.getParameter("job_date");
-
-        String startTime = "0000-00-00 00";         // 预设开始时间
-        String endTime = "9999-99-99 99";           // 预设结束时间
 
         // 判断岸桥分时效率的类型
         if (StringUtils.isEmpty(qcEfficiencyType)) {

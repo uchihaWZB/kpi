@@ -50,7 +50,6 @@ public class QcEfficiencyAnalysisServiceImpl implements QcEfficiencyAnalysisServ
     @Override
     public List<Map<String, Object>> getAllVesselProductivity(@Param("startTime") String startTime, @Param("endTime") String endTime) {
         List<Map<String, Object>> listMap = new ArrayList<>();
-        Map<String, Object> map = new HashMap<>();
 
         List<String> listVesselVisitNames = sts_shiptcgDao.getVesselVisitNames();
         Double vesselProductivity = 0d;
@@ -58,6 +57,8 @@ public class QcEfficiencyAnalysisServiceImpl implements QcEfficiencyAnalysisServ
         for (String name : listVesselVisitNames) {
 
             vesselProductivity = sts_shiptcgDao.getProductivityByVessleVisit(name, startTime, endTime);
+
+            Map<String, Object> map = new HashMap<>();
             map.put("vesselName", name);
             map.put("vesselProductivity", vesselProductivity);
 
