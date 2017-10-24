@@ -19,26 +19,29 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/")
-public class Qc_MTjobtimeController extends BaseAction {
+public class qc_mtjobtimeController extends BaseAction {
 
-    private static Logger logger = Logger.getLogger(Qc_MTjobtimeController.class);
+    private static Logger logger = Logger.getLogger(qc_mtjobtimeController.class);
 
     @Autowired
     private MTjobtimeService mTjobtimeService;
 
-    @RequestMapping(value = "qc_MTjobtime",method = RequestMethod.GET)
-    public String qc_MTjobtime() {
+    @RequestMapping(value = "qc_mtjobtime",method = RequestMethod.GET)
+    public String qc_mtjobtime() {
 
         System.out.println("+++++++++++++++主副小车作业时间++++++++++++++++++++");
-        return "qc_MTjobtime";
+        return "qc_mtjobtime";
     }
 
     @RequestMapping(value = "getMTjobtimedata",method = RequestMethod.GET)
     public @ResponseBody JsonResult getMTjobtimedata(String startDateTime,String endDateTime,String craneNum) {
 
         System.out.println("+++++++++++++++获取主副小车作业时间++++++++++++++++++++");
-        /*// 记录debug级别的信息
-        logger.debug("This is debug message.");
+
+        System.out.println(startDateTime+"  YY  "+endDateTime+"   TTT  "+craneNum);
+
+        // 记录debug级别的信息
+        /*logger.debug("This is debug message.");
         // 记录info级别的信息
         logger.info("This is info message.");
         // 记录warn级别的信息
@@ -50,7 +53,7 @@ public class Qc_MTjobtimeController extends BaseAction {
         List<JsonMTjobtime> jsonMTALjobtimeList = new LinkedList<JsonMTjobtime>();
         List<MTjobtime> MTjobtimeList = mTjobtimeService.getMTjobtimedata(startDateTime,endDateTime,craneNum);
 
-        System.out.println(startDateTime+"  YY  "+endDateTime+"   TTT  "+craneNum);
+
         if(!CollectionUtils.isEmpty(MTjobtimeList)){
 
             for (MTjobtime mTjobtime:MTjobtimeList){

@@ -52,10 +52,11 @@ public class QcEfficiencyAnalysisServiceImpl implements QcEfficiencyAnalysisServ
         List<Map<String, Object>> listMap = new ArrayList<>();
 
         List<String> listVesselVisitNames = sts_shiptcgDao.getVesselVisitNames();
+        System.out.println("listVesselVisitNames:        "+listVesselVisitNames.size());
         Double vesselProductivity = 0d;
 
         for (String name : listVesselVisitNames) {
-
+            System.out.println("name:    "+name+"   startTime:     "+startTime+"  endTime:     "+endTime);
             vesselProductivity = sts_shiptcgDao.getProductivityByVessleVisit(name, startTime, endTime);
 
             Map<String, Object> map = new HashMap<>();
