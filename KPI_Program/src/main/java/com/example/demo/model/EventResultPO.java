@@ -6,112 +6,147 @@ import java.util.Date;
 /**
  * 事件结果记录PO
  *
+ * 实际映射 表T_STS_CONVERT_EVENT_RECORD
+ *
  * Created by lenovopc001 on 2017/9/11.
  */
 public class EventResultPO implements Serializable {
 
-    private String qcId;
+    private Integer id;
 
-    private Double eventGapTime;
+    private String sts_id;
 
-    private String eventDesc;
+    private Double event_gap;
 
-    private Date currentEventCreated;
+    private String event_desc;
 
-    private Long currentEventId;
+    private String gap_type;
 
-    private Date nextEventCreated;
+    private String gap_id;
 
-    private Long nextEventId;
+    private Integer last_update_id;
 
-    private String gapId;
+    private String current_event_id;
 
-    private String gapType;
+    private Date current_event_created;
+
+    private String next_event_id;
+
+    private Date next_event_created;
+
+    private String event_level;
 
     public EventResultPO() {
     }
 
-    public EventResultPO(String qcId, Double eventGapTime, String eventDesc, Date currentEventCreated, Long currentEventId, Date nextEventCreated, Long nextEventId, String gapId, String gapType) {
-        this.qcId = qcId;
-        this.eventGapTime = eventGapTime;
-        this.eventDesc = eventDesc;
-        this.currentEventCreated = currentEventCreated;
-        this.currentEventId = currentEventId;
-        this.nextEventCreated = nextEventCreated;
-        this.nextEventId = nextEventId;
-        this.gapId = gapId;
-        this.gapType = gapType;
+    public EventResultPO(Integer id, String sts_id, Double event_gap, String event_desc, String gap_type, String gap_id, Integer last_update_id, String current_event_id, Date current_event_created, String next_event_id, Date next_event_created, String event_level) {
+        this.id = id;
+        this.sts_id = sts_id;
+        this.event_gap = event_gap;
+        this.event_desc = event_desc;
+        this.gap_type = gap_type;
+        this.gap_id = gap_id;
+        this.last_update_id = last_update_id;
+        this.current_event_id = current_event_id;
+        this.current_event_created = current_event_created;
+        this.next_event_id = next_event_id;
+        this.next_event_created = next_event_created;
+        this.event_level = event_level;
     }
 
-    public String getQcId() {
-        return qcId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setQcId(String qcId) {
-        this.qcId = qcId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public Double getEventGapTime() {
-        return eventGapTime;
+    public String getSts_id() {
+        return sts_id;
     }
 
-    public void setEventGapTime(Double eventGapTime) {
-        this.eventGapTime = eventGapTime;
+    public void setSts_id(String sts_id) {
+        this.sts_id = sts_id;
     }
 
-    public String getEventDesc() {
-        return eventDesc;
+    public Double getEvent_gap() {
+        return event_gap;
     }
 
-    public void setEventDesc(String eventDesc) {
-        this.eventDesc = eventDesc;
+    public void setEvent_gap(Double event_gap) {
+        this.event_gap = event_gap;
     }
 
-    public Date getCurrentEventCreated() {
-        return currentEventCreated;
+    public String getEvent_desc() {
+        return event_desc;
     }
 
-    public void setCurrentEventCreated(Date currentEventCreated) {
-        this.currentEventCreated = currentEventCreated;
+    public void setEvent_desc(String event_desc) {
+        this.event_desc = event_desc;
     }
 
-    public Long getCurrentEventId() {
-        return currentEventId;
+    public String getGap_type() {
+        return gap_type;
     }
 
-    public void setCurrentEventId(Long currentEventId) {
-        this.currentEventId = currentEventId;
+    public void setGap_type(String gap_type) {
+        this.gap_type = gap_type;
     }
 
-    public Date getNextEventCreated() {
-        return nextEventCreated;
+    public String getGap_id() {
+        return gap_id;
     }
 
-    public void setNextEventCreated(Date nextEventCreated) {
-        this.nextEventCreated = nextEventCreated;
+    public void setGap_id(String gap_id) {
+        this.gap_id = gap_id;
     }
 
-    public Long getNextEventId() {
-        return nextEventId;
+    public Integer getLast_update_id() {
+        return last_update_id;
     }
 
-    public void setNextEventId(Long nextEventId) {
-        this.nextEventId = nextEventId;
+    public void setLast_update_id(Integer last_update_id) {
+        this.last_update_id = last_update_id;
     }
 
-    public String getGapId() {
-        return gapId;
+    public String getCurrent_event_id() {
+        return current_event_id;
     }
 
-    public void setGapId(String gapId) {
-        this.gapId = gapId;
+    public void setCurrent_event_id(String current_event_id) {
+        this.current_event_id = current_event_id;
     }
 
-    public String getGapType() {
-        return gapType;
+    public Date getCurrent_event_created() {
+        return current_event_created;
     }
 
-    public void setGapType(String gapType) {
-        this.gapType = gapType;
+    public void setCurrent_event_created(Date current_event_created) {
+        this.current_event_created = current_event_created;
+    }
+
+    public String getNext_event_id() {
+        return next_event_id;
+    }
+
+    public void setNext_event_id(String next_event_id) {
+        this.next_event_id = next_event_id;
+    }
+
+    public Date getNext_event_created() {
+        return next_event_created;
+    }
+
+    public void setNext_event_created(Date next_event_created) {
+        this.next_event_created = next_event_created;
+    }
+
+    public String getEvent_level() {
+        return event_level;
+    }
+
+    public void setEvent_level(String event_level) {
+        this.event_level = event_level;
     }
 }

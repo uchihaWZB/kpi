@@ -1,5 +1,7 @@
 package com.example.demo.vo;
 
+import java.util.Date;
+
 /**
  * 记录岸桥任务层面作业耗时VO
  *
@@ -7,30 +9,49 @@ package com.example.demo.vo;
  */
 public class QcTaskInfoVO {
 
-    private String gap_Id;           // 耗时事件Id
+    private Integer id;
 
-    private String gap_Type;         // 耗时事件类型
+    private String sts_id;
 
-    private String event_Desc;       // 耗时事件描述
+    private double event_gap;
 
-    private Double eventConsume;    // 耗时事件总耗时
+    private String gap_Type;
+
+    private Date current_event_created;
 
     public QcTaskInfoVO() {
     }
 
-    public QcTaskInfoVO(String gap_Id, String gap_Type, String event_Desc, Double eventConsume) {
-        this.gap_Id = gap_Id;
+    public QcTaskInfoVO(Integer id, String sts_id, double event_gap, String gap_Type, Date current_event_created) {
+        this.id = id;
+        this.sts_id = sts_id;
+        this.event_gap = event_gap;
         this.gap_Type = gap_Type;
-        this.event_Desc = event_Desc;
-        this.eventConsume = eventConsume;
+        this.current_event_created = current_event_created;
     }
 
-    public String getGap_Id() {
-        return gap_Id;
+    public Integer getId() {
+        return id;
     }
 
-    public void setGap_Id(String gap_Id) {
-        this.gap_Id = gap_Id;
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getSts_id() {
+        return sts_id;
+    }
+
+    public void setSts_id(String sts_id) {
+        this.sts_id = sts_id;
+    }
+
+    public double getEvent_gap() {
+        return event_gap;
+    }
+
+    public void setEvent_gap(double event_gap) {
+        this.event_gap = event_gap;
     }
 
     public String getGap_Type() {
@@ -41,19 +62,11 @@ public class QcTaskInfoVO {
         this.gap_Type = gap_Type;
     }
 
-    public String getEvent_Desc() {
-        return event_Desc;
+    public Date getCurrent_event_created() {
+        return current_event_created;
     }
 
-    public void setEvent_Desc(String event_Desc) {
-        this.event_Desc = event_Desc;
-    }
-
-    public Double getEventConsume() {
-        return eventConsume;
-    }
-
-    public void setEventConsume(Double eventConsume) {
-        this.eventConsume = eventConsume;
+    public void setCurrent_event_created(Date current_event_created) {
+        this.current_event_created = current_event_created;
     }
 }

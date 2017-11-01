@@ -160,30 +160,50 @@
     var InstrctionGapEchart = echarts.init(document.getElementById('qcInstrctionGap'), 'vintage');
 
     $(function() {
+
         $('input[name=vesselDate]').daterangepicker({
-            timePicker : true,          // 显示时间
-            timePicker24Hour : true,    // 24小时制
-            endDate : new Date(),
+            timePicker : true,                                      // 显示时间
+            timePicker24Hour : true,                                // 24小时制
+            timePickerSeconds : true,                               // 事件显示到秒
+            startDate : moment().hours(0).minutes(0).seconds(0),    // 设置开始日期
+            endDate : moment(new Date()),                           // 设置结束日期
+            maxDate : moment(new Date()),                           // 设置最大日期
+            ranges : {
+                '今天' : [moment().startOf('day'), moment()],
+                '昨天' : [moment().subtract(1, 'day'), moment().subtract(1, 'day')],
+                '最近一周': [moment().subtract(6, 'days'), moment()],
+                '前30天': [moment().subtract(29, 'days'), moment()],
+                '本月': [moment().startOf('month'), moment().endOf('month')],
+                '上月': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            showWeekNumbers : true,
             locale : {
-                format : 'YYYY-MM-DD HH',
-                applyLabel: '确认',
-                cancelLabel: '取消',
-                daysOfWeek: ["日","一","二","三","四","五","六"],
-                monthNames: ["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"],
+                format : 'YYYY-MM-DD HH:mm:ss',                     // 设置显示格式
+                applyLabel  : '确认',                               // 确定按钮文本
+                cancelLabel : '取消',                               // 取消按钮文本
+                fromLabel : '从',
+                toLabel : '到',
+                customRangeLabel : '自定义',
+                daysOfWeek: ["日", "一", "二", "三", "四", "五", "六"],
+                monthNames: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
             }
+
+        }, function (start, end, label) {
+            timeRangeChange = [start.format('YYYY-MM-DD HH:mm:ss'), end.format('YYYY-MM-DD HH:mm:ss')];
+            console.log(timeRangeChange);
         });
 
         initVesselQcProEchart(vesselQcProData);
     });
 
-    // 根据时间查询船时效率
+    // 根据参数查询船时效率
     $("#searchBtn").click(function () {
         var params = $("#vesselQcForm").serialize();
         var timeTemp = $('input[name=vesselDate]').val();
         $("#timeTemp").val(timeTemp);
 
         $.ajax({
-            url : 'vessel_qc_productivity/queryByTime',
+            url : 'vessel_qc_productivity/queryByParams',
             type : 'GET',
             data : params,
             success : function (data) {
@@ -205,7 +225,7 @@
      */
     function getVesselQcProEchartOptions(vesselQcProData) {
 
-        var vesselNames = [];       // 船到访名
+        var vesselNames = [];       // 船名
         var vesselPros = [];        // 船到访对应工作效率
 
         for (var index in vesselQcProData) {
@@ -215,7 +235,7 @@
 
         var VesselQcProOption = {
             title : {
-                text : '船时岸桥分时效率',
+                text : '船舶每次到访时作业效率',
                 left : 'center',
             },
             tooltip : {
@@ -317,29 +337,22 @@
         VesselQcProEchart.setOption(vesselQcOption);
 
         VesselQcProEchart.on('click', function(param) {
-//            jConfirm('确定查询船次 '+ param.name +' 下的岸桥作业效率？', "提示！", function(opt) {
-//                if (opt) {
 
-                    // 获取当前特定时间
-                    var vesselDate = $("#timeTemp").val();
-                    var option = {
-                        url : 'vessel_qc_productivity/qcProOfVessel',
-                        type : 'GET',
-                        data : {'vesselName' : param.name,
-                                'vesselDate' : vesselDate},
-                        success : function (data) {
-                            var result = data.result;
-                            var currentOptions = getQcProOfVesselEchartOptions(result, param.name);
+            // 获取当前特定时间
+            var vesselDate = $("#timeTemp").val();
+            var option = {
+                url : 'vessel_qc_productivity/qcProOfVessel',
+                type : 'GET',
+                data : {'vesselName' : param.name,
+                        'vesselDate' : vesselDate},
+                success : function (data) {
+                    var result = data.result;
+                    var currentOptions = getQcProOfVesselEchartOptions(result, param.name);
 
-                            QcProsOfVesselEchart.setOption(currentOptions);
-                        }
-                    };
-                    $.ajax(option);
-
-//                } else {
-//                    return;
-//                }
-//            });
+                    QcProsOfVesselEchart.setOption(currentOptions);
+                }
+            };
+            $.ajax(option);
         });
     }
 
@@ -359,18 +372,28 @@
                             'vesselDate' : vesselDate},
                     success : function (data) {
                         var result = data;
-                        var qcTaskEventOption = getQcTaskEventEchartOptions(result, param.name);
-                        var taskCostOption = getTaskCostEchartOptions(result, param.name);
-                        var taskGapOption = getTaskGapEchartOptions(result, param.name);
+                        if (result != null) {
+                            var qcTaskEventOption = getQcTaskEventEchartOptions(result.totalInfo, param.name);
+                            var taskCostOption = getTaskCostEchartOptions(result.taskInfo, param.name);
+                            var taskGapOption = getTaskGapEchartOptions(result.gapInfo, param.name);
 
-                        QcTaskEventEchart.setOption(qcTaskEventOption);
-                        TaskEventCostEchart.setOption(taskCostOption);
-                        TaskEventGapEchart.setOption(taskGapOption);
+                            QcTaskEventEchart.setOption(qcTaskEventOption);
+                            TaskEventCostEchart.setOption(taskCostOption);
+                            TaskEventGapEchart.setOption(taskGapOption);
+                        } else {
+                            ;
+                        }
+
+
+
                     }
                 };
                 $.ajax(option);
 //            }
 //        });
+    });
+    
+    QcProsOfVesselEchart.on('click', function () {
     });
 
     /**
@@ -457,11 +480,28 @@
      * @param qcTaskEventData
      * @param qcName
      */
-    function getQcTaskEventEchartOptions(qcTaskEventData, qcName) {
+    function getQcTaskEventEchartOptions(object, qcName) {
 
-        var totalTaskCost = qcTaskEventData.totalTaskCost;
-        var totalTaskGap = qcTaskEventData.totalTaskGap;
-        var legendData = ['任务时间', '任务间隔'];
+        var legendData = [];
+        var taskInfoData = [];
+
+        for (var key in object) {
+
+            switch (key) {
+                case "taskTotalConsume":
+                    if(object[key] > 0) {
+                        legendData.push('任务耗时');
+                        taskInfoData.push({value:object[key],name:'任务耗时'});
+                    }
+                    break;
+                case "gapTotalConsume":
+                    if(object[key] > 0) {
+                        legendData.push('任务间隔耗时');
+                        taskInfoData.push({value:object[key],name:'任务间隔耗时'});
+                    }
+                    break;
+            }
+        }
 
         var option = {
             title : {
@@ -493,10 +533,7 @@
                     type : 'pie',
                     radius : [30, 90],
                     center : ['50%', '60%'],
-                    data : [
-                        {value : totalTaskCost, name : '任务时间'},
-                        {value : totalTaskGap, name : '任务间隔'}
-                    ]
+                    data : taskInfoData
             },
         };
 
@@ -509,16 +546,33 @@
      * @param qcTaskEventData
      * @param qcName
      */
-    function getTaskCostEchartOptions(qcTaskEventData, qcName) {
+    function getTaskCostEchartOptions(object, qcName) {
 
-        var costConsumeData = qcTaskEventData.allTaskCostConsume;
         var legendData = [];
         var costSeriesData = [];
 
-        for (var index in costConsumeData) {
+        for (var key in object) {
 
-            legendData.push(costConsumeData[index].name);
-            costSeriesData.push(costConsumeData[index]);
+            switch (key) {
+                case "chanageBayConsume":
+                    if(object[key] > 0) {
+                        legendData.push('换贝任务耗时');
+                        costSeriesData.push({value:object[key],name:'换贝任务耗时'});
+                    }
+                    break;
+                case "parkConsume":
+                    if(object[key] > 0) {
+                        legendData.push('Park任务耗时');
+                        costSeriesData.push({value:object[key],name:'Park任务耗时'});
+                    }
+                    break;
+                case "normalConsume":
+                    if(object[key] > 0) {
+                        legendData.push('普通任务耗时');
+                        costSeriesData.push({value:object[key],name:'普通任务耗时'});
+                    }
+                    break;
+            }
         }
 
         var option = {
@@ -565,16 +619,57 @@
      * @param qcTaskEventData
      * @param qcName
      */
-    function getTaskGapEchartOptions(qcTaskEventData, qcName) {
+    function getTaskGapEchartOptions(object, qcName) {
 
-        var gapConsumeData = qcTaskEventData.allTaskGapConsume;
         var legendData = [];
         var gapSeriesData = [];
 
-        for (var index in gapConsumeData) {
+        for (var key in object) {
 
-            legendData.push(gapConsumeData[index].name);
-            gapSeriesData.push(gapConsumeData[index]);
+            switch (key) {
+                case "waitWQConsume":
+                    if(object[key] > 0) {
+                        legendData.push('等待WorkQueue耗时');
+                        gapSeriesData.push({value:object[key],name:'等待WorkQueue耗时'});
+                    }
+                    break;
+                case "waitWiCiConsume":
+                    if(object[key] > 0) {
+                        legendData.push('等待WI/CI耗时');
+                        gapSeriesData.push({value:object[key],name:'等待WI/CI耗时'});
+                    }
+                    break;
+                case "waitOcrCosume":
+                    if(object[key] > 0) {
+                        legendData.push('等待OCR耗时');
+                        gapSeriesData.push({value:object[key],name:'等待OCR耗时'});
+                    }
+                    break;
+                case "waitLockConsume":
+                    if(object[key] > 0) {
+                        legendData.push('等待台座锁定耗时');
+                        gapSeriesData.push({value:object[key],name:'等待台座锁定耗时'});
+                    }
+                    break;
+                case "waitSTSMSrebootConsume":
+                    if(object[key] > 0) {
+                        legendData.push('等待STSMS重启耗时');
+                        gapSeriesData.push({value:object[key],name:'等待STSMS重启耗时'});
+                    }
+                    break;
+                case "waitMTConsume":
+                    if(object[key] > 0) {
+                        legendData.push('主小车模式被切换耗时');
+                        gapSeriesData.push({value:object[key],name:'主小车模式被切换耗时'});
+                    }
+                    break;
+                case "otherConsume":
+                    if(object[key] > 0) {
+                        legendData.push('其他因素耗时');
+                        gapSeriesData.push({value:object[key],name:'其他因素耗时'});
+                    }
+                    break;
+            }
         }
 
         var option = {
@@ -613,6 +708,54 @@
         };
 
         return option;
+    }
+
+
+    /**
+     * 获取指令作业间隔总计耗时数据
+     *
+     * @param param包含：岸桥id，开始时间，结束时间
+     */
+    function initConsumeTimeData(param) {
+
+        var consumTotalList;
+        var consumName = [];
+        var consumTime = [];
+        var qcid = '--';
+
+        $.ajax({
+            url: '/consumTotalTimeAnalysis',
+            type: 'GET',
+            dataType: 'html',
+            timeout: gAjaxTimeout,
+            data: param,
+            error: function(xhr, textStatus, thrownError){
+                //var err = $.i18n.prop('errors.ajax', xhr.status, textStatus);
+                alert(xhr.status + textStatus);
+            },
+            success: function(response) {
+                var res = eval('(' + response + ')');
+
+                if(res.result == "ok"){
+                    if(res.data != null){
+                        consumTotalList = res.data.consumTotalList;
+
+                        if(consumTotalList.length >0){
+
+                            for(var i in consumTotalList){
+
+                                consumName[i] = consumTotalList[i].consumName;
+                                consumTime[i] = consumTotalList[i].consumTime;
+                            }
+
+                            qcid = consumTotalList[0].qcid;
+                        }
+                        reloadConSumChart(consumName,consumTime,qcid);
+                    }
+                }
+            }
+        });
+        
     }
     
 

@@ -12,17 +12,50 @@ import java.util.List;
 /**
  * 事件记录DAO
  *
+ * 实际映射 表T_STS_CONVERT_EVENT_RECORD
+ *
  * Created by lenovopc001 on 2017/9/11.
  */
 
 @Mapper
 public interface EventResultDao {
 
-    @Select("SELECT * FROM T_STS_EVENT_RESULT")
-    List<EventResultPO> getAllEventResultPO();
+    /**
+     * 根据 STS_ID 查询事件记录
+     *
+     * @param stsId
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    @Select("SELECT id,sts_id,event_gap,gap_Type,current_event_created\n"
+            +"FROM T_STS_CONVERT_EVENT_RECORD\n"
+            +"WHERE STS_ID = #{stsId}\n"
+            +"AND TO_CHAR(CURRENT_EVENT_CREATED, 'yyyy-mm-dd hh24') >= #{startTime}\n"
+            +"AND TO_CHAR(CURRENT_EVENT_CREATED, 'yyyy-mm-dd hh24') <= #{endTime}")
+    List<EventResultPO> getEventResultPOBySTSId(@Param("stsId") String stsId,
+                                                  @Param("startTime") String startTime,
+                                                  @Param("endTime") String endTime);
 
     /**
-     * 根据岸桥id获取 岸桥任务 总耗时
+     * 根据qcId（sts_id）查询某时间段下岸桥总耗时
+     *
+     * @param stsId
+     * @param startTime
+     * @param endTime
+     * @return
+     */
+    @Select("SELECT COUNT(EVENT_GAP)\n"
+            +"FROM T_STS_CONVERT_EVENT_RECORD\n"
+            +"WHERE STS_ID = #{stsId}\n"
+            +"AND TO_CHAR(CURRENT_EVENT_CREATED, 'yyyy-mm-dd hh24') >= #{startTime}\n"
+            +"AND TO_CHAR(CURRENT_EVENT_CREATED, 'yyyy-mm-dd hh24') <= #{endTime}")
+    Double getTotalConsumeOfSTSByQcId(@Param("stsId") String stsId,
+                                      @Param("startTime") String startTime,
+                                      @Param("endTime") String endTime);
+
+    /**
+     * 根据 QC_ID 获取 岸桥任务 总耗时
      *
      * @param qcId
      * @return

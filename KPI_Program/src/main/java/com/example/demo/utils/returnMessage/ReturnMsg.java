@@ -34,9 +34,6 @@ public class ReturnMsg<T> {
     //返回结果的内容
     private T result;
 
-    //返回的结果内容（当result变量不满足要求时，使用）
-    private Object extraResult;
-
     public ReturnMsg() {
         super();
     }
@@ -69,14 +66,6 @@ public class ReturnMsg<T> {
 
     public void setResult(T result) {
         this.result = result;
-    }
-
-    public Object getExtraValue() {
-        return extraResult;
-    }
-
-    public void setExtraValue(Object extraValue) {
-        this.extraResult = extraValue;
     }
 
     // 设置成功状态

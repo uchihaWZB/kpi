@@ -1,13 +1,16 @@
 package com.example.demo.service;
 
 import com.example.demo.Controller.selectdata.VesselList;
+import com.example.demo.model.EventResultPO;
 import com.example.demo.model.QC_CommandPO;
 //import com.sun.tools.javac.util.List;
 import java.util.List;
 import java.util.Map;
 
+import com.example.demo.model.T_STS_ConvertEventRecordPO;
 import com.example.demo.vo.QcJobEfficiencyVO;
 import com.example.demo.vo.QcProductivityOfVesselVO;
+import com.example.demo.vo.QcTaskInfoVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
@@ -54,5 +57,7 @@ public interface QcEfficiencyAnalysisService {
      * @param qcId
      * @return
      */
-    Map<String, Object> getQcTaskEventConsumeByQcId(@Param("qcId") String qcId);
+    List<T_STS_ConvertEventRecordPO> getTaskInfoByQcId(@Param("qcId") String qcId,
+                                                       @Param("startTime") String startTime,
+                                                       @Param("endTime") String endTime);
 }

@@ -19,9 +19,9 @@ import java.util.List;
  */
 @Controller
 @RequestMapping("/")
-public class qc_mtjobtimeController extends BaseAction {
+public class Qc_MTjobtimeController extends BaseAction {
 
-    private static Logger logger = Logger.getLogger(qc_mtjobtimeController.class);
+    private static Logger logger = Logger.getLogger(Qc_MTjobtimeController.class);
 
     @Autowired
     private MTjobtimeService mTjobtimeService;
