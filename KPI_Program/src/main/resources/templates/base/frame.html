@@ -27,6 +27,9 @@
     <link th:href="@{/my-plugins/frame1/css/sb-admin-2.css}"
              href="../../static/my-plugins/frame1/css/sb-admin-2.css"
              rel="stylesheet" type="text/css" />
+    <link th:href="@{/my-plugins/daterangepicker/daterangepicker.css}"
+             href="../../static/my-plugins/daterangepicker/daterangepicker.css"
+             rel="stylesheet" type="text/css">
     <!-- CSS文件 END -->
     <style>
         nav>a.dropdown-toggle{
@@ -47,6 +50,20 @@
             src="../../static/my-plugins/raphael/raphael.min.js"></script>
     <script th:src="@{/my-plugins/frame1/js/sb-admin-2.js}"
             src="../../static/my-plugins/frame1/js/sb-admin-2.js"></script>
+
+    <!-- 时间控件 -->
+    <script th:src="@{/my-plugins/daterangepicker/moment.js}"
+            src="../../static/my-plugins/daterangepicker/moment.js"></script>
+    <script th:src="@{/my-plugins/daterangepicker/daterangepicker.js}"
+            src="../../static/my-plugins/daterangepicker/daterangepicker.js"></script>
+
+    <!-- Echart控件 -->
+    <script th:src="@{/plugins/echarts3/echarts.min.js}"
+            src="../../static/plugins/echarts3/echarts.min.js"></script>
+    <script th:src="@{/plugins/echarts3/echarts.js}"
+            src="../../static/plugins/echarts3/echarts.js"></script>
+    <script th:src="@{/plugins/echarts3/theme/vintage.js}"
+            src="../../static/plugins/echarts3/theme/vintage.js"></script>
     <!-- Script文件 START -->
 </head>
 
@@ -59,7 +76,7 @@
         <div class="page-header-inner ">
             <!-- BEGIN LOGO -->
             <div class="page-logo">
-                <a href="#">
+                <a href="../index.html">
                     <img src="img/logo.png" alt="logo" class="logo-default" />
                 </a>
                 <div class="menu-toggler sidebar-toggler">
@@ -271,275 +288,49 @@
 
 <!-- 左侧导航栏框架 -->
 <div th:fragment="sidebar" class="page-sidebar-wrapper">
-    <div class="page-sidebar navbar-collapse collapse">
-        <ul class="page-sidebar-menu  page-header-fixed "
-            data-keep-expanded="false" data-auto-scroll="true"
-            data-slide-speed="200" style="padding-top: 20px">
-            <!-- DOC: To remove the sidebar toggler from the sidebar you just need to completely remove the below "sidebar-toggler-wrapper" LI element -->
-            <!-- BEGIN SIDEBAR TOGGLER BUTTON -->
-            <li class="sidebar-toggler-wrapper hide">
-                <div class="sidebar-toggler">
-                    <span></span>
-                </div>
-            </li>
-            <!-- END SIDEBAR TOGGLER BUTTON -->
-            <li class="nav-item ">
-                <a href="javascript:;" class="nav-link nav-toggle">
-                    <i class="fa fa-home"></i> <span class="title">--月度分析</span> <span
-                        class="arrow"></span>
-                </a>
-                <ul class="sub-menu">
-                    <li class="nav-item ">
-                        <a href="monthly_vessel_analysis.html" class="nav-link ">
-                            <span class="title">月度船舶分析</span>
-                        </a>
-                    </li>
-                    <li class="nav-item ">
-                        <a href="monthly_shift_analysis.html" class="nav-link ">
-                            <span class="title">月度工班分析</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li class="nav-item ">
-                <a href="javascript:;" class="nav-link nav-toggle">
-                    <i class="fa fa-bar-chart"></i> <span class="title">船舶分析</span>
-                    <span class="arrow"></span>
-                </a>
-                <ul class="sub-menu">
-                    <li class="nav-item ">
-                        <a href="vessel_QCefficiency_analysis.html" class="nav-link ">
-                            <span class="title">船时效率分析</span>
-                        </a>
-                    </li>
-                    <li class="nav-item ">
-                        <a href="vessel_efficiency_table.html" class="nav-link ">
-                            <span class="title">船舶效率大表</span>
-                        </a>
-                    </li>
-                    <li class="nav-item ">
-                        <a href="vessel_efficiency_analysis.html" class="nav-link ">
-                            <span class="title">船舶效率分析</span>
-                        </a>
-                    </li>
-                    <li class="nav-item ">
-                        <a href="vessel_efficiency_analysis_scatter.html"
-                           class="nav-link ">
-                            <span class="title">船舶效率分析（散点图）</span>
-                        </a>
-                    </li>
-                    <li class="nav-item ">
-                        <a href="vessel_single_efficiency_analysis.html"
-                           class="nav-link ">
-                            <span class="title">--单船效率分析</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li class="nav-item ">
-                <a href="javascript:;" class="nav-link nav-toggle">
-                    <i class="fa fa-pie-chart"></i> <span class="title">岸边机械</span>
-                    <span class="arrow"></span>
-                </a>
-                <ul class="sub-menu">
-                    <li class="nav-item  ">
-                        <a href="qc_efficiency_table.html" class="nav-link ">
-                            <span class="title">岸桥效率大表</span>
-                        </a>
-                    </li>
-                    <li class="nav-item ">
-                        <a href="qc_efficiency_analysis.html" class="nav-link ">
-                            <span class="title">岸桥作业效率</span>
-                        </a>
-                    </li>
-                    <li class="nav-item ">
-                        <a href="vessel_qc_productivity.html" class="nav-link ">
-                            <span class="title">船时岸桥效率分析</span>
-                        </a>
-                    </li>
-                    <li class="nav-item ">
-                        <a href="qc_MTandPT_jobtime.html" class="nav-link ">
-                            <span class="title">主副小车作业时间</span>
-                        </a>
-                    </li>
-                    <li class="nav-item  ">
-                        <a href="qc_delay_table.html" class="nav-link ">
-                            <span class="title">岸桥延时（等待）大表</span>
-                        </a>
-                    </li>
-                    <li class="nav-item  ">
-                        <a href="qc_delay_analysis.html" class="nav-link ">
-                            <span class="title">岸桥延时（等待）分析</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li class="nav-item  ">
-                <a href="javascript:;" class="nav-link nav-toggle">
-                    <i class="fa fa-area-chart"></i> <span class="title">水平机械</span>
-                    <span class="arrow"></span>
-                </a>
-                <ul class="sub-menu">
-                    <li class="nav-item  ">
-                        <a href="agv_efficiency_table.html" class="nav-link ">
-                            <span class="title">AGV效率大表</span>
-                        </a>
-                    </li>
-                    <li class="nav-item  ">
-                        <a href="agv_efficiency_analysis.html" class="nav-link ">
-                            <span class="title">AGV效率OEE分析</span>
-                        </a>
-                    </li>
-                    <li class="nav-item  ">
-                        <a href="agv_efficiency_analysis_time.html" class="nav-link ">
-                            <span class="title">AGV效率分时分析</span>
-                        </a>
-                    </li>
-                    <li class="nav-item  ">
-                        <a href="agv_delay_table.html" class="nav-link ">
-                            <span class="title">AGV延时（等待）大表</span>
-                        </a>
-                    </li>
-                    <li class="nav-item  ">
-                        <a href="agv_delay_analysis.html" class="nav-link ">
-                            <span class="title">AGV延时（等待）分析</span>
-                        </a>
-                    </li>
-                    <li class="nav-item  ">
-                        <a href="agv_mobile_track_analysis.html" class="nav-link ">
-                            <span class="title">AGV移动轨迹分析</span>
-                        </a>
-                    </li>
-                    <li class="nav-item  ">
-                        <a href="truck_efficiency_table.html" class="nav-link ">
-                            <span class="title">内集卡大表统计</span>
-                        </a>
-                    </li>
-                    <li class="nav-item  ">
-                        <a href="truck_efficiency_analysis.html" class="nav-link ">
-                            <span class="title">内集卡效率分析</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li class="nav-item  ">
-                <a href="javascript:;" class="nav-link nav-toggle">
-                    <i class="fa fa-line-chart"></i> <span class="title">堆场机械</span>
-                    <span class="arrow"></span>
-                </a>
-                <ul class="sub-menu">
-                    <li class="nav-item  ">
-                        <a href="asc_efficiency_table.html" class="nav-link ">
-                            <span class="title">ASC效率大表</span>
-                        </a>
-                    </li>
-                    <li class="nav-item  ">
-                        <a href="asc_efficiency_analysis.html" class="nav-link ">
-                            <span class="title">ASC效率OEE分析</span>
-                        </a>
-                    </li>
-                    <li class="nav-item  ">
-                        <a href="asc_efficiency_analysis_time.html" class="nav-link ">
-                            <span class="title">ASC效率分时分析</span>
-                        </a>
-                    </li>
-                    <li class="nav-item  ">
-                        <a href="asc_delay_table.html" class="nav-link ">
-                            <span class="title">ASC延时（等待）大表</span>
-                        </a>
-                    </li>
-                    <li class="nav-item  ">
-                        <a href="asc_delay_analysis.html" class="nav-link ">
-                            <span class="title">ASC延时（等待）分析</span>
-                        </a>
-                    </li>
-                    <li class="nav-item  ">
-                        <a href="asc_mobile_track_analysis.html" class="nav-link ">
-                            <span class="title">ASC移动轨迹分析</span>
-                        </a>
-                    </li>
-                    <li class="nav-item  ">
-                        <a href="block_send_distribution.html" class="nav-link ">
-                            <span class="title">收发箱箱区分布</span>
-                        </a>
-                    </li>
+    <div class="sidebar-default sidebar" role="navigation">
+        <div class="sidebar-nav navbar-collapse">
+            <ul class="nav" id="side-menu">
 
-                </ul>
-            </li>
-            <li class="nav-item ">
-                <a href="javascript:;" class="nav-link nav-toggle">
-                    <i class="fa fa-industry"></i> <span class="title">--陆侧作业</span>
-                    <span class="arrow"></span>
-                </a>
-                <ul class="sub-menu">
-                    <li class="nav-item ">
-                        <a href="out_truck_efficiency_table.html" class="nav-link ">
-                            <span class="title">外集卡大表统计</span>
-                        </a>
-                    </li>
-                    <li class="nav-item ">
-                        <a href="out_truck_efficiency_analysis.html" class="nav-link ">
-                            <span class="title">外集卡效率分析</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li class="nav-item ">
-                <a href="javascript:;" class="nav-link nav-toggle">
-                    <i class="fa fa-industry"></i> <span class="title">--单机设备</span>
-                    <span class="arrow"></span>
-                </a>
-                <ul class="sub-menu">
-                    <li class="nav-item ">
-                        <a href="device_repair.html" class="nav-link ">
-                            <span class="title">设备维修</span>
-                        </a>
-                    </li>
-                    <li class="nav-item ">
-                        <a href="device_maintain.html" class="nav-link ">
-                            <span class="title">设备保养</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li class="nav-item ">
-                <a href="javascript:;" class="nav-link nav-toggle">
-                    <i class="fa fa-image"></i> <span class="title">--BI分析</span> <span
-                        class="arrow"></span>
-                </a>
-                <ul class="sub-menu">
-                    <li class="nav-item ">
-                        <a href="bi_box_structure_efficiency.html" class="nav-link ">
-                            <span class="title">箱型结构效率回归分析</span>
-                        </a>
-                    </li>
-                    <li class="nav-item ">
-                        <a href="bi_mechanical_work_time_equation.html"
-                           class="nav-link ">
-                            <span class="title">机械作业时间方程聚类分析</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li class="nav-item  ">
-                <a href="javascript:;" class="nav-link nav-toggle">
-                    <i class="icon-settings"></i> <span class="title">--系统配置</span>
-                    <span class="arrow"></span>
-                </a>
-                <ul class="sub-menu">
-                    <li class="nav-item  ">
-                        <a href="system_user_profile.html" class="nav-link ">
-                            <i class="icon-user  "></i> <span class="title">我的信息</span>
-                        </a>
-                    </li>
-                    <li class="nav-item  ">
-                        <a href="system_user_password.html" class="nav-link ">
-                            <i class="icon-key"></i> <span class="title">修改密码</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
+                <!-- END SIDEBAR TOGGLER BUTTON -->
+                <li class="nav-item ">
+                    <a href="#">
+                        <i class="fa fa-bar-chart-o fa-fw"></i>&nbsp;&nbsp;岸边机械<span class="fa arrow"></span>
+                    </a>
+                    <ul class="nav nav-second-level">
+                        <li class="nav-item ">
+                            <a href="qc_efficiency_analysis.html" class="nav-link ">
+                                <span class="title">&nbsp;&nbsp;&nbsp;&nbsp;岸桥作业效率</span>
+                            </a>
+                        </li>
+                        <li class="nav-item ">
+                            <a href="vessel_qc_productivity.html" class="nav-link ">
+                                <span class="title">&nbsp;&nbsp;&nbsp;&nbsp;船时岸桥效率</span>
+                            </a>
+                        </li>
+                        <li class="nav-item ">
+                            <a href="qc_mtjobtime.html" class="nav-link ">
+                                <span class="title">&nbsp;&nbsp;&nbsp;&nbsp;主小车作业耗时分析</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="#">
+                        <i class="fa fa-cog"></i>&nbsp;&nbsp;系统配置<span class="fa arrow"></span>
+                    </a>
+                    <ul class="nav nav-second-level">
+                        <li class="nav-item  ">
+                            <a href="#" class="nav-link ">
+                                <i class="icon-user  "></i> <span class="title">我的信息</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
     </div>
 </div>
 

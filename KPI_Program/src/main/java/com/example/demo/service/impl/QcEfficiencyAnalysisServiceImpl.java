@@ -85,11 +85,12 @@ public class QcEfficiencyAnalysisServiceImpl implements QcEfficiencyAnalysisServ
     }
 
     @Override
-    public List<T_STS_ConvertEventRecordPO> getTaskInfoByQcId(@Param("qcId") String qcId,
+    public List<T_STS_ConvertEventRecordPO> getCraneInfoByQcId(@Param("qcId") String qcId,
+                                                              @Param("eventLevel") String eventLevel,
                                                               @Param("startTime") String startTime,
                                                               @Param("endTime") String endTime) {
 
-        return t_sts_convertEventRecordDao.getConvertEventResultPOBySTSId(qcId, startTime, endTime);
+        return t_sts_convertEventRecordDao.getConvertEventResultPOBySTSId(qcId, eventLevel, startTime, endTime);
 
     }
 }

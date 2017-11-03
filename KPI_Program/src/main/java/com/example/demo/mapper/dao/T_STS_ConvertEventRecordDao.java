@@ -23,17 +23,22 @@ public interface T_STS_ConvertEventRecordDao {
     /**
      * 根据 STS_ID 查询事件记录
      *
-     * @param stsId
+     * @param stsId 岸桥id
      * @param startTime
      * @param endTime
+     *
      * @return
      */
     @Select("SELECT *\n"
             +"FROM T_STS_CONVERT_EVENT_RECORD\n"
             +"WHERE STS_ID = #{stsId}\n"
+            +"AND EVENT_LEVEL = #{eventLevel}\n"
             +"AND TO_CHAR(CURRENT_EVENT_CREATED,'yyyy-mm-dd hh24:mi:ss') >= #{startTime}\n"
             +"AND TO_CHAR(CURRENT_EVENT_CREATED,'yyyy-mm-dd hh24:mi:ss') <= #{endTime}")
     List<T_STS_ConvertEventRecordPO> getConvertEventResultPOBySTSId(@Param("stsId") String stsId,
+                                                                    @Param("eventLevel") String eventLevel,
                                                                     @Param("startTime") String startTime,
                                                                     @Param("endTime") String endTime);
+
+
 }

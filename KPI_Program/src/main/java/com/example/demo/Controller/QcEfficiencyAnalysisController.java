@@ -65,6 +65,8 @@ public class QcEfficiencyAnalysisController extends BaseAction{
         model.addAttribute("qcJobs",resultInfo.get("qcJobs"));
         model.addAttribute("qcEfficiencyType",resultInfo.get("qcEfficiencyType"));
 
+        model.addAttribute("title","岸桥作业效率分析");
+
         return "qc_efficiency_analysis";
     }
 

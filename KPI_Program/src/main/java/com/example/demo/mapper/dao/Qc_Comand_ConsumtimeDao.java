@@ -96,7 +96,7 @@ public interface Qc_Comand_ConsumtimeDao {
             "       'GAP151','GAP154','GAP155','GAP156','GAP157','GAP158')   \n" +
             "group by \n" +
             "      STS_ID ")
-    public List<consumTotalTimeVO> getconsumTotalTimeData(@Param("startDateTime") String startDateTime, @Param("endDateTime") String endDateTime,
+    List<consumTotalTimeVO> getconsumTotalTimeData(@Param("startDateTime") String startDateTime, @Param("endDateTime") String endDateTime,
                                                           @Param("craneNum") String craneNum);
 
     /**
@@ -318,7 +318,7 @@ public interface Qc_Comand_ConsumtimeDao {
             "              and gap_type ='INSTRUCTIONCOST'  \n" +
             "            group by \n" +
             "              STS_ID  ")
-    public List<Ins_GapAnalysisVO> getIns_GapData(@Param("startDateTime") String startDateTime, @Param("endDateTime") String endDateTime,
+    List<Ins_GapAnalysisVO> getIns_GapData(@Param("startDateTime") String startDateTime, @Param("endDateTime") String endDateTime,
                                                   @Param("craneNum") String craneNum);
 
     /**
@@ -428,7 +428,7 @@ public interface Qc_Comand_ConsumtimeDao {
             "       and t2.macrocmdstate = 'FINISH'\n" +
             "group by\n" +
             "     t1.qc_id ")
-    public List<Ins_TimeAnalysisVO> getInsTimeData(@Param("startDateTime") String startDateTime, @Param("endDateTime") String endDateTime,
+    List<Ins_TimeAnalysisVO> getInsTimeData(@Param("startDateTime") String startDateTime, @Param("endDateTime") String endDateTime,
                                                    @Param("craneNum") String craneNum);
 
 }

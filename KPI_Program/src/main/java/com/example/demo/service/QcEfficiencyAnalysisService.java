@@ -57,7 +57,8 @@ public interface QcEfficiencyAnalysisService {
      * @param qcId
      * @return
      */
-    List<T_STS_ConvertEventRecordPO> getTaskInfoByQcId(@Param("qcId") String qcId,
+    List<T_STS_ConvertEventRecordPO> getCraneInfoByQcId(@Param("qcId") String qcId,
+                                                       @Param("eventLevel") String eventLevel,
                                                        @Param("startTime") String startTime,
                                                        @Param("endTime") String endTime);
 }

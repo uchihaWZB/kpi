@@ -102,15 +102,16 @@
                 </div>
 
                 <div class="row">
+
                     <div class="col-md-4">
                         <div class="portlet light">
-                            <div id="qcInstrctionCost" style="height: 450px;"></div>
+                            <div id="qcInstrction" style="height: 450px;"></div>
                         </div>
                     </div>
 
                     <div class="col-md-4">
                         <div class="portlet light">
-                            <div id="qcInstrction" style="height: 450px;"></div>
+                            <div id="qcInstrctionCost" style="height: 450px;"></div>
                         </div>
                     </div>
 
@@ -373,13 +374,20 @@
                     success : function (data) {
                         var result = data;
                         if (result != null) {
-                            var qcTaskEventOption = getQcTaskEventEchartOptions(result.totalInfo, param.name);
-                            var taskCostOption = getTaskCostEchartOptions(result.taskInfo, param.name);
-                            var taskGapOption = getTaskGapEchartOptions(result.gapInfo, param.name);
+                            console.log(result);
+                            var taskTotalOption = getQcTaskEventEchartOptions(result.taskInfo, param.name);
+                            var taskCostOption = getTaskCostEchartOptions(result.taskHaveInfo, param.name);
+                            var taskGapOption = getTaskGapEchartOptions(result.taskGapInfo, param.name);
 
-                            QcTaskEventEchart.setOption(qcTaskEventOption);
+                            var insTotalOption = getInsEchartOptions(result.insInfo, param.name);
+                            var insGapOption = getInsGapEchartOptions(result.insGapInfo, param.name);
+
+                            QcTaskEventEchart.setOption(taskTotalOption);
                             TaskEventCostEchart.setOption(taskCostOption);
                             TaskEventGapEchart.setOption(taskGapOption);
+
+                            QcInstrctionEchart.setOption(insTotalOption);
+                            InstrctionGapEchart.setOption(insGapOption);
                         } else {
                             ;
                         }
@@ -391,9 +399,6 @@
                 $.ajax(option);
 //            }
 //        });
-    });
-    
-    QcProsOfVesselEchart.on('click', function () {
     });
 
     /**
@@ -712,52 +717,144 @@
 
 
     /**
-     * 获取指令作业间隔总计耗时数据
+     * 配置指令作业执行和间隔耗时参数
      *
      * @param param包含：岸桥id，开始时间，结束时间
      */
-    function initConsumeTimeData(param) {
+    function getInsEchartOptions(object, qcName) {
 
-        var consumTotalList;
-        var consumName = [];
-        var consumTime = [];
-        var qcid = '--';
+        var legendData = [];
+        var insInfoData = [];
 
-        $.ajax({
-            url: '/consumTotalTimeAnalysis',
-            type: 'GET',
-            dataType: 'html',
-            timeout: gAjaxTimeout,
-            data: param,
-            error: function(xhr, textStatus, thrownError){
-                //var err = $.i18n.prop('errors.ajax', xhr.status, textStatus);
-                alert(xhr.status + textStatus);
-            },
-            success: function(response) {
-                var res = eval('(' + response + ')');
+        for (var key in object) {
 
-                if(res.result == "ok"){
-                    if(res.data != null){
-                        consumTotalList = res.data.consumTotalList;
-
-                        if(consumTotalList.length >0){
-
-                            for(var i in consumTotalList){
-
-                                consumName[i] = consumTotalList[i].consumName;
-                                consumTime[i] = consumTotalList[i].consumTime;
-                            }
-
-                            qcid = consumTotalList[0].qcid;
-                        }
-                        reloadConSumChart(consumName,consumTime,qcid);
+            switch (key) {
+                case "insConsume":
+                    if(object[key] > 0) {
+                        legendData.push('指令执行耗时');
+                        insInfoData.push({value:object[key],name:'指令执行耗时'});
                     }
-                }
+                    break;
+                case "insGapConsume":
+                    if(object[key] > 0) {
+                        legendData.push('指令间隔耗时');
+                        insInfoData.push({value:object[key],name:'指令间隔耗时'});
+                    }
+                    break;
             }
-        });
-        
+        }
+
+        var option = {
+            title : {
+                text : qcName +' 主小车指令层分析',
+                x : 'center'
+            },
+            tooltip : {
+                trigger : 'item',
+                formatter : "{a} <br/>{b} : {c}s ({d}%)",
+            },
+            legend : {
+                orient : 'vertical',
+                x : 'left',
+                top : '7%',
+                data : legendData
+            },
+            toolbox : {
+                show : true,
+                top : "10%",
+                feature : {
+                    mark : {show : true},
+                    dataView : {show: true, readOnly: false},
+                    restore : {show : true},
+                    saveAsImage : {show: true}
+                }
+            },
+            series : {
+                name : '主小车时间段内作业任务效率分析',
+                type : 'pie',
+                radius : [30, 90],
+                center : ['50%', '60%'],
+                data : insInfoData
+            },
+        };
+
+        return option;
     }
-    
+
+    /**
+     * 排至指令作业间隔类型耗时参数
+     */
+    function getInsGapEchartOptions(object, qcName) {
+        var legendData = [];
+        var insGapData = [];
+
+        for (var key in object) {
+
+            switch (key) {
+                case "insWaitToPoisotion":
+                    if(object[key] > 0) {
+                        legendData.push('等待下一目标位置');
+                        insGapData.push({value:object[key],name:'换贝任务耗时'});
+                    }
+                    break;
+                case "insWaitPT":
+                    if(object[key] > 0) {
+                        legendData.push('等待门架小车避让');
+                        insGapData.push({value:object[key],name:'Park任务耗时'});
+                    }
+                    break;
+                case "insWaitExceptionHandle":
+                    if(object[key] > 0) {
+                        legendData.push('等待异常处理时间');
+                        insGapData.push({value:object[key],name:'普通任务耗时'});
+                    }
+                    break;
+                case "insSTSMSPerformance" :
+                    if(object[key] > 0) {
+                        legendData.push('系统性能耗时');
+                        insGapData.push({value:object[key],name:'普通任务耗时'});
+                    }
+                    break;
+            }
+        }
+
+        var option = {
+            title : {
+                text : qcName +' 主小车指令间隔耗时分析',
+                x : 'center'
+            },
+            tooltip : {
+                trigger : 'item',
+                formatter : "{a} <br/>{b} : {c}s ({d}%)",
+            },
+            legend : {
+                orient : 'vertical',
+                x : 'left',
+                top : '7%',
+                data : legendData
+            },
+            toolbox : {
+                show : true,
+                top : '10%',
+                feature : {
+                    mark : {show : true},
+                    dataView : {show: true, readOnly: false},
+                    restore : {show : true},
+                    saveAsImage : {show: true}
+                }
+            },
+            series : {
+                name : '主小车指令间隔耗时分析',
+                type : 'pie',
+                radius : [20, 90],
+                center : ['50%', '60%'],
+                avoidLabelOverlap : true,
+                data : insGapData,
+            },
+        };
+
+        return option;
+    }
 
 </script>
 

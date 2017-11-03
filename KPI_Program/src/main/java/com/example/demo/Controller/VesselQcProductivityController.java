@@ -1,5 +1,6 @@
 package com.example.demo.Controller;
 
+import com.example.demo.mapper.dao.T_STS_ConvertEventRecordDao;
 import com.example.demo.model.EventResultPO;
 import com.example.demo.model.T_STS_ConvertEventRecordPO;
 import com.example.demo.service.QcEfficiencyAnalysisService;
@@ -78,18 +79,8 @@ public class VesselQcProductivityController {
         String vesselDate = request.getParameter("vesselDate");
 
         // 根据船时岸桥工作时间进行筛选
-        if (!StringUtils.isEmpty(vesselDate)) {
+        timeDeal(vesselDate);
 
-            String[] vesselTime = StringUtils.split(vesselDate, " - ");
-            if (!StringUtils.isEmpty(vesselTime[0])) {
-
-                startTime = vesselTime[0];
-            }
-            if (!StringUtils.isEmpty(vesselTime[1])) {
-
-                endTime = vesselTime[1];
-            }
-        }
         listVesselPros = qcEfficiencyAnalysisService.getAllVesselProductivity(startTime, endTime);
 
         rm.setResult(listVesselPros);
@@ -150,27 +141,32 @@ public class VesselQcProductivityController {
         Double taskTotalConsume = 0.0d;
         Double gapTotalConsume = 0.0d;
 
+        // 以下变量用以统计不同指令及指令间隔类型的累计耗时情况
+        Double insConsume = 0d;
+        Double insGapConsume = 0d;
+
+        Double insWaitToPoisotion = 0d;
+        Double insWaitPT = 0d;
+        Double insWaitExceptionHandle = 0d;
+        Double insSTSMSPerformance = 0d;
+
         String qcId = request.getParameter("qcId");
         String vesselDate = request.getParameter("vesselDate");
 
-        if (!StringUtils.isEmpty(vesselDate)) {
-
-            String[] vesselTime = StringUtils.split(vesselDate, " - ");
-            if (!StringUtils.isEmpty(vesselTime[0])) {
-
-                startTime = vesselTime[0];
-            }
-            if (!StringUtils.isEmpty(vesselTime[1])) {
-
-                endTime = vesselTime[1];
-            }
-        }
+        timeDeal(vesselDate);
 
         if (!StringUtils.isEmpty(qcId)) {
 
-            List<T_STS_ConvertEventRecordPO> listEventResultPOs = qcEfficiencyAnalysisService.getTaskInfoByQcId(qcId, startTime, endTime);
+            List<T_STS_ConvertEventRecordPO> listTaskResults = qcEfficiencyAnalysisService.getCraneInfoByQcId(qcId,
+                                                                                                                "Level01",
+                                                                                                                 startTime,
+                                                                                                                 endTime);
+            List<T_STS_ConvertEventRecordPO> listInsResults = qcEfficiencyAnalysisService.getCraneInfoByQcId(qcId,
+                                                                                                            "Level03",
+                                                                                                             startTime,
+                                                                                                             endTime);
 
-            for (T_STS_ConvertEventRecordPO po : listEventResultPOs) {
+            for (T_STS_ConvertEventRecordPO po : listTaskResults) {
                 switch (po.getGap_type()) {
                     case Constant.WAIT_WORK_QUEUE :
                         workQueueConsume += po.getEvent_gap();
@@ -205,32 +201,69 @@ public class VesselQcProductivityController {
                 }
             }
 
+            for (T_STS_ConvertEventRecordPO po : listInsResults) {
+                switch (po.getGap_type()) {
+                    case Constant.WAIT_TO_POISOTION :
+                        insWaitToPoisotion += po.getEvent_gap();
+                        break;
+                    case Constant.WAIT_PT :
+                        insWaitPT += po.getEvent_gap();
+                        break;
+                    case Constant.WAIT_EXCEPTION_HANDLE :
+                        insWaitExceptionHandle += po.getEvent_gap();
+                        break;
+                    case Constant.STSMS_PERFORMANCE :
+                        insSTSMSPerformance += po.getEvent_gap();
+                        break;
+                    case Constant.INSTRUCTION_COST :
+                        insConsume += po.getEvent_gap();
+                        break;
+                }
+            }
+
             gapTotalConsume = workQueueConsume + wiciConsume + ocrConsume + pfLockConsume + stsRebootConsume + mtManualConsume + otherFactorsConsume;
             taskTotalConsume = changeBayConsume + parkTaskConsume + normalTaskConsume;
 
-            Map<String, Object> jsonTotal = new HashMap<>();
-            Map<String, Object> jsonTask = new HashMap<>();
-            Map<String, Object> jsonGap = new HashMap<>();
+            insGapConsume = insWaitToPoisotion + insWaitPT + insWaitExceptionHandle + insSTSMSPerformance;
 
-            jsonTotal.put("taskTotalConsume", taskTotalConsume);
-            jsonTotal.put("gapTotalConsume", gapTotalConsume);
+            Map<String, Object> taskInfo = new HashMap<>();
+            Map<String, Object> taskHaveInfo = new HashMap<>();
+            Map<String, Object> taskGapInfo = new HashMap<>();
 
-            jsonGap.put("waitWQConsume", workQueueConsume);
-            jsonGap.put("waitWiCiConsume", wiciConsume);
-            jsonGap.put("waitOcrCosume", ocrConsume);
-            jsonGap.put("waitLockConsume", pfLockConsume);
-            jsonGap.put("waitSTSMSrebootConsume", stsRebootConsume);
-            jsonGap.put("waitMTConsume", mtManualConsume);
-            jsonGap.put("otherConsume", otherFactorsConsume);
+            Map<String, Object> insInfo = new HashMap<>();
+            Map<String, Object> insHaveInfo = new HashMap<>();
+            Map<String, Object> insGapInfo = new HashMap<>();
 
-            jsonTask.put("changeBayConsume", changeBayConsume);
-            jsonTask.put("parkConsume", parkTaskConsume);
-            jsonTask.put("normalConsume", normalTaskConsume);
+            taskInfo.put("taskTotalConsume", taskTotalConsume);
+            taskInfo.put("gapTotalConsume", gapTotalConsume);
+
+            insInfo.put("insConsume", insConsume);
+            insInfo.put("insGapConsume", insGapConsume);
+
+            taskGapInfo.put("waitWQConsume", workQueueConsume);
+            taskGapInfo.put("waitWiCiConsume", wiciConsume);
+            taskGapInfo.put("waitOcrCosume", ocrConsume);
+            taskGapInfo.put("waitLockConsume", pfLockConsume);
+            taskGapInfo.put("waitSTSMSrebootConsume", stsRebootConsume);
+            taskGapInfo.put("waitMTConsume", mtManualConsume);
+            taskGapInfo.put("otherConsume", otherFactorsConsume);
+
+            insGapInfo.put("insWaitToPoisotion", insWaitToPoisotion);
+            insGapInfo.put("insWaitPT", insWaitPT);
+            insGapInfo.put("insWaitExceptionHandle", insWaitExceptionHandle);
+            insGapInfo.put("insSTSMSPerformance", insSTSMSPerformance);
 
 
-            map.put("totalInfo", jsonTotal);
-            map.put("taskInfo", jsonTask);
-            map.put("gapInfo", jsonGap);
+            taskHaveInfo.put("changeBayConsume", changeBayConsume);
+            taskHaveInfo.put("parkConsume", parkTaskConsume);
+            taskHaveInfo.put("normalConsume", normalTaskConsume);
+
+
+            map.put("taskInfo", taskInfo);
+            map.put("taskHaveInfo", taskHaveInfo);
+            map.put("taskGapInfo", taskGapInfo);
+            map.put("insInfo", insInfo);
+            map.put("insGapInfo", insGapInfo);
 
         } else {
            return null;
@@ -240,13 +273,22 @@ public class VesselQcProductivityController {
     }
 
     /**
-     * 根据qc_id 获取特定岸桥下的指令作业信息
+     * 处理前台传来的时间字符串
+     *
+     * @param timeToDeal
      */
-    @RequestMapping(value = "/qcInstrctionEvenConsume", method = RequestMethod.GET)
-    @ResponseBody
-    public Map<String, Object> getInstrctionEventConsumeByQcId(HttpServletRequest request, HttpServletResponse response) {
-        Map<String, Object> result = new HashMap<>();
+    public void timeDeal(String timeToDeal) {
+        if (!StringUtils.isEmpty(timeToDeal)) {
 
-        return result;
+            String[] timePhase = StringUtils.split(timeToDeal, " - ");
+            if (!StringUtils.isEmpty(timePhase[0])) {
+
+                startTime = timePhase[0];
+            }
+            if (!StringUtils.isEmpty(timePhase[1])) {
+
+                endTime = timePhase[1];
+            }
+        }
     }
 }
